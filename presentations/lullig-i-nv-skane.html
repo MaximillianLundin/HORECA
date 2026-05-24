@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<title>Lullig i NV-Skåne — Monicas Vinhelg!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Bowlby+One+SC&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow:      #F5B82E;
+    --yellow-deep: #EBA21A;
+    --cream:       #FFF4D6;
+    --cream-soft:  #FFFBEC;
+    --green:       #1B5E3D;
+    --green-dark:  #114229;
+    --red:         #D7261E;
+    --red-dark:    #A81810;
+    --ink:         #2A1A0A;
+  }
+
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #ddd; }
+  body { font-family: 'Nunito', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 12px auto;
+    padding: 16mm 14mm;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 20% 10%, #FAC847 0%, transparent 40%),
+      radial-gradient(circle at 85% 90%, #EBA21A 0%, transparent 45%),
+      var(--yellow);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    page-break-after: always;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* ============================================================ */
+  /* DISPLAY TITLE — chunky green with cream outline + drop shadow */
+  /* ============================================================ */
+  .display-title {
+    font-family: 'Lilita One', cursive;
+    color: var(--green);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow:
+      -3px -3px 0 var(--cream), 3px -3px 0 var(--cream),
+      -3px  3px 0 var(--cream), 3px  3px 0 var(--cream),
+       0   -3px 0 var(--cream), 0    3px 0 var(--cream),
+      -3px  0   0 var(--cream), 3px  0   0 var(--cream),
+       6px  6px 0 rgba(0,0,0,0.22);
+  }
+
+  /* ============================================================ */
+  /* COVER PAGE                                                   */
+  /* ============================================================ */
+  .cover-names {
+    text-align: center;
+    font-family: 'Bowlby One SC', sans-serif;
+    color: var(--red);
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    line-height: 1.25;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.18);
+    margin-bottom: 14px;
+  }
+  .cover-kicker {
+    text-align: center;
+    font-size: 14px;
+    color: var(--green-dark);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .cover-title { text-align: center; font-size: 110px; }
+  .cover-title .line { display: block; }
+
+  .cover-portrait-wrap {
+    margin: 26px auto 18px;
+    width: 290px;
+    height: 290px;
+    border-radius: 50%;
+    background: var(--cream);
+    box-shadow:
+      0 0 0 6px var(--green),
+      0 0 0 10px var(--cream),
+      0 0 0 14px var(--red),
+      0 10px 20px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .cover-portrait-wrap .placeholder {
+    text-align: center;
+    color: var(--green-dark);
+    font-family: 'Lilita One', cursive;
+    font-size: 18px;
+    line-height: 1.3;
+    padding: 0 20px;
+  }
+  .cover-portrait-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Big red ribbon — "MONICAS VINHELG!" */
+  .ribbon {
+    position: relative;
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-family: 'Bowlby One SC', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1.5px;
+    padding: 14px 42px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+    box-shadow: 0 6px 0 var(--red-dark), 0 10px 20px rgba(0,0,0,0.2);
+    transform: rotate(-2deg);
+  }
+  .ribbon::before, .ribbon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 22px;
+    height: 100%;
+    background: var(--red-dark);
+    transform: translateY(-50%);
+    z-index: -1;
+  }
+  .ribbon::before {
+    left: -18px;
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  }
+  .ribbon::after {
+    right: -18px;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+  .ribbon-wrap { text-align: center; margin: 22px 0 28px; }
+
+  /* Theater-style badge at bottom */
+  .theater-badge {
+    margin: 0 auto;
+    display: block;
+    width: 360px;
+    background: var(--green);
+    border-radius: 50% / 30%;
+    color: var(--cream);
+    text-align: center;
+    padding: 18px 24px 14px;
+    box-shadow: 0 6px 0 var(--green-dark), 0 12px 22px rgba(0,0,0,0.2);
+  }
+  .theater-badge .masks {
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+  .theater-badge .name {
+    font-family: 'Bowlby One SC', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .theater-badge .sub {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+
+  .cover-bottom {
+    text-align: center;
+    margin-top: 18px;
+  }
+  .cover-bottom .date {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    color: var(--ink);
+    font-size: 20px;
+  }
+  .cover-bottom .where {
+    font-family: 'Bowlby One SC', sans-serif;
+    color: var(--ink);
+    font-size: 26px;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* Decorative little wine glasses bottom corners */
+  .deco-glass {
+    position: absolute;
+    font-size: 70px;
+    line-height: 1;
+    opacity: 0.55;
+    color: var(--green-dark);
+    pointer-events: none;
+  }
+  .deco-glass.tl { top: 14mm; left: 12mm; transform: rotate(-15deg); }
+  .deco-glass.br { bottom: 14mm; right: 12mm; transform: rotate(15deg); }
+
+  /* ============================================================ */
+  /* PROGRAMME PAGES                                              */
+  /* ============================================================ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .page-header .kicker {
+    font-family: 'Bowlby One SC', sans-serif;
+    color: var(--red);
+    font-size: 16px;
+    letter-spacing: 3px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+  }
+  .page-header .title {
+    font-family: 'Lilita One', cursive;
+    color: var(--green);
+    font-size: 54px;
+    line-height: 1;
+    text-shadow:
+      -2px -2px 0 var(--cream), 2px -2px 0 var(--cream),
+      -2px  2px 0 var(--cream), 2px  2px 0 var(--cream),
+       4px  4px 0 rgba(0,0,0,0.18);
+  }
+  .page-header .sub {
+    margin-top: 6px;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Day banner — red ribbon for whole-page section header */
+  .day {
+    position: relative;
+    margin: 22px -6mm 14px;
+    padding: 14px 24px 14px 30px;
+    background: var(--red);
+    color: #fff;
+    box-shadow: 0 4px 0 var(--red-dark);
+    transform: rotate(-0.8deg);
+  }
+  .day.green {
+    background: var(--green);
+    box-shadow: 0 4px 0 var(--green-dark);
+    transform: rotate(0.8deg);
+  }
+  .day .num {
+    font-family: 'Bowlby One SC', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    opacity: 0.85;
+  }
+  .day .label {
+    font-family: 'Lilita One', cursive;
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.22);
+  }
+  .day .tag {
+    display: inline-block;
+    background: var(--cream);
+    color: var(--ink);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-left: 10px;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+    vertical-align: middle;
+  }
+
+  /* Programme list */
+  .items { margin: 0 0 6px; }
+  .item {
+    display: grid;
+    grid-template-columns: 92px 1fr auto;
+    gap: 14px;
+    align-items: start;
+    padding: 10px 12px;
+    border-bottom: 2px dashed rgba(27, 94, 61, 0.35);
+  }
+  .item:last-child { border-bottom: none; }
+  .item .time {
+    font-family: 'Bowlby One SC', sans-serif;
+    color: var(--red);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    line-height: 1.15;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+  }
+  .item .body .title {
+    font-family: 'Lilita One', cursive;
+    color: var(--green-dark);
+    font-size: 19px;
+    line-height: 1.1;
+    letter-spacing: 0.3px;
+    margin-bottom: 3px;
+  }
+  .item .body .desc {
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .item .stamp {
+    align-self: center;
+    font-family: 'Bowlby One SC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: var(--green);
+    box-shadow: 0 2px 0 var(--green-dark);
+    white-space: nowrap;
+    transform: rotate(-3deg);
+  }
+  .item .stamp.red    { background: var(--red);   box-shadow: 0 2px 0 var(--red-dark); transform: rotate(2deg); }
+  .item .stamp.amber  { background: #C58A14;      box-shadow: 0 2px 0 #8C5F0A;         transform: rotate(-2deg); }
+  .item .stamp.ink    { background: #444;         box-shadow: 0 2px 0 #222;            transform: rotate(1deg); }
+
+  /* Wine ordering section */
+  .wine-section {
+    background: var(--cream);
+    border: 3px solid var(--green);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin: 18px 0;
+    box-shadow: 0 5px 0 var(--green-dark);
+  }
+  .wine-section h3 {
+    font-family: 'Lilita One', cursive;
+    color: var(--red);
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .wine-section p.intro {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+
+  table.wines {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  table.wines th {
+    background: var(--red);
+    color: #fff;
+    font-family: 'Bowlby One SC', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 9px 10px;
+    text-align: left;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  }
+  table.wines td {
+    padding: 8px 10px;
+    border-bottom: 1px dashed #E5C77A;
+    font-weight: 600;
+  }
+  table.wines tr:last-child td { border-bottom: none; }
+  table.wines tr:nth-child(even) td { background: #FFFBEC; }
+  table.wines td:first-child {
+    font-family: 'Lilita One', cursive;
+    color: var(--green-dark);
+    font-size: 14px;
+  }
+  .wine-footnote {
+    font-size: 11.5px;
+    font-style: italic;
+    color: var(--green-dark);
+    margin-top: 10px;
+    font-weight: 600;
+  }
+
+  /* Taxi & contact strip */
+  .info-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .info-card {
+    background: var(--green);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 0 var(--green-dark);
+  }
+  .info-card.red {
+    background: var(--red);
+    box-shadow: 0 4px 0 var(--red-dark);
+  }
+  .info-card h4 {
+    font-family: 'Bowlby One SC', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  }
+  .info-card .big {
+    font-family: 'Lilita One', cursive;
+    font-size: 22px;
+    line-height: 1.1;
+    margin: 2px 0 4px;
+  }
+  .info-card p {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green-dark);
+    letter-spacing: 0.3px;
+  }
+
+  /* Tiny decorative grapes/wine dots */
+  .dotstrip {
+    text-align: center;
+    color: var(--green-dark);
+    margin: 12px 0 6px;
+    font-size: 14px;
+    letter-spacing: 8px;
+    opacity: 0.6;
+  }
+
+  /* ============================================================ */
+  /* PRINT                                                        */
+  /* ============================================================ */
+  @media print {
+    html, body { background: #fff; }
+    .page { margin: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- PAGE 1 · COVER                                                -->
+<!-- ============================================================ -->
+<section class="page">
+  <span class="deco-glass tl">🍷</span>
+  <span class="deco-glass br">🍇</span>
+
+  <div class="cover-names">
+    Monica · Göran · Maximilian · Emma<br>
+    Jessica · Anders · BG · Karin
+  </div>
+
+  <div class="cover-kicker">En sommarvinhelg av Skånes finaste vingårdar</div>
+
+  <h1 class="display-title cover-title">
+    <span class="line">Lullig i</span>
+    <span class="line">NV-Skåne</span>
+  </h1>
+
+  <div class="cover-portrait-wrap">
+    <img src="monica.jpg" alt="Monica">
+  </div>
+
+  <div class="ribbon-wrap">
+    <div class="ribbon">Monicas Vinhelg!</div>
+  </div>
+
+  <div class="theater-badge">
+    <div class="masks">🎭</div>
+    <div class="name">Bjärehalvöns Vinteater</div>
+    <div class="sub">Förslöv · Anno 2025</div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="date">3 – 5 juli 2025</div>
+    <div class="where">Ljungbyholmsvägen 70, Förslöv</div>
+  </div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- PAGE 2 · PROGRAMME (Fredag + Lördag)                          -->
+<!-- ============================================================ -->
+<section class="page">
+  <header class="page-header">
+    <div class="kicker">★ PROGRAM ★</div>
+    <h2 class="title">Helgens akter</h2>
+    <div class="sub">3 dagar · 2 vingårdar · ∞ glas</div>
+  </header>
+
+  <div class="day green">
+    <div class="num">AKT 1 · FREDAG 3 JULI</div>
+    <div class="label">Ankomst &amp; välkomstdrink
+      <span class="tag">Hemma</span>
+    </div>
+  </div>
+
+  <div class="items">
+    <div class="item">
+      <div class="time">Em.</div>
+      <div class="body">
+        <div class="title">Ankomst till stugan</div>
+        <div class="desc">Packa upp, bekanta er med huset. Välkomstdrink i trädgården – hängmattan väntar!</div>
+      </div>
+      <div class="stamp">Ankomst</div>
+    </div>
+    <div class="item">
+      <div class="time">18:00</div>
+      <div class="body">
+        <div class="title">Middag hemma</div>
+        <div class="desc">Lagad middag tillsammans. Tips: handla mat &amp; dryck längs vägen.</div>
+      </div>
+      <div class="stamp amber">Mat &amp; dryck</div>
+    </div>
+  </div>
+
+  <div class="dotstrip">● ● ● ● ● ● ● ● ●</div>
+
+  <div class="day">
+    <div class="num">AKT 2 · LÖRDAG 4 JULI</div>
+    <div class="label">Vingårdsdagen!
+      <span class="tag">Stordagen</span>
+    </div>
+  </div>
+
+  <div class="items">
+    <div class="item">
+      <div class="time">12:30</div>
+      <div class="body">
+        <div class="title">Avfärd – Ljungbyholms Vingård</div>
+        <div class="desc">Promenad ~20 min eller taxi 5 min. Ljungbyholmsvägen 231, Förslöv.</div>
+      </div>
+      <div class="stamp">20 min / taxi</div>
+    </div>
+    <div class="item">
+      <div class="time">13:00<br>–15:00</div>
+      <div class="body">
+        <div class="title">Ljungbyholms Vingård 🍷</div>
+        <div class="desc">Rundtur + provning av 3 viner med ost- &amp; charkbricka. Terra Skåne, 4 ha sydsluttning mellan Båstad och Ängelholm. <strong>Betyg 5,0/5</strong></div>
+      </div>
+      <div class="stamp red">Vingård 1</div>
+    </div>
+    <div class="item">
+      <div class="time">15:00</div>
+      <div class="body">
+        <div class="title">Vidare till Vejby — snacks längs vägen!</div>
+        <div class="desc">~40 min promenad genom skånsk landsbygd eller taxi 6 min.</div>
+      </div>
+      <div class="stamp">40 min / taxi</div>
+    </div>
+    <div class="item">
+      <div class="time">16:00<br>–17:00</div>
+      <div class="body">
+        <div class="title">Vejby Vingård 🍇</div>
+        <div class="desc">Rundtur + 4 viner i georgisk qvevri-källare – enda marani-källaren i norra Europa. Ekologisk &amp; biodynamisk. <strong>Betyg 4,8/5</strong></div>
+      </div>
+      <div class="stamp red">Vingård 2</div>
+    </div>
+    <div class="item">
+      <div class="time">~17:30</div>
+      <div class="body">
+        <div class="title">Hem till stugan</div>
+        <div class="desc">~30 min promenad eller taxi hem. Ring: 0431-17 17 0.</div>
+      </div>
+      <div class="stamp">30 min / taxi</div>
+    </div>
+    <div class="item">
+      <div class="time">18:30</div>
+      <div class="body">
+        <div class="title">Middag hemma</div>
+        <div class="desc">Avslappnad middag – passa på att öppna något av dagens viner.</div>
+      </div>
+      <div class="stamp amber">Mat &amp; dryck</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- PAGE 3 · SÖNDAG + VINER + TAXI                                -->
+<!-- ============================================================ -->
+<section class="page">
+  <div class="day green">
+    <div class="num">AKT 3 · SÖNDAG 5 JULI</div>
+    <div class="label">Frukost, lunch &amp; hemresa
+      <span class="tag">Final</span>
+    </div>
+  </div>
+
+  <div class="items">
+    <div class="item">
+      <div class="time">09:00</div>
+      <div class="body">
+        <div class="title">Frukost tillsammans</div>
+        <div class="desc">Lugn gemensam frukost – duka upp fint och njut av morgonen.</div>
+      </div>
+      <div class="stamp">Hemma</div>
+    </div>
+    <div class="item">
+      <div class="time">11:30</div>
+      <div class="body">
+        <div class="title">Lunch hemma</div>
+        <div class="desc">Pastasallad med pesto, mozzarella &amp; skinka – görs kvällen innan eller på 20 min.</div>
+      </div>
+      <div class="stamp amber">Mat hemma</div>
+    </div>
+    <div class="item">
+      <div class="time">~13:00</div>
+      <div class="body">
+        <div class="title">Hemresa</div>
+        <div class="desc">Packa ihop och kör hem – med fulla minnen och ett par flaskor i bilen!</div>
+      </div>
+      <div class="stamp ink">Avresa</div>
+    </div>
+  </div>
+
+  <!-- Wine ordering -->
+  <div class="wine-section">
+    <h3>🍷 Beställ hem viner — Arilds &amp; Thora</h3>
+    <p class="intro">
+      Dessa gårdar hinns inte med under helgen, men finns på Systembolaget.
+      Beställ <strong>minst 1–2 veckor</strong> före avresa till valfri butik — kostnadsfritt.
+    </p>
+
+    <table class="wines">
+      <thead>
+        <tr>
+          <th>Vin</th>
+          <th>Druva</th>
+          <th>Stil</th>
+          <th>Beställ via</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Arilds Vingård Solaris</td>
+          <td>Solaris</td>
+          <td>Vitt, torrt &amp; friskt</td>
+          <td>systembolaget.se</td>
+        </tr>
+        <tr>
+          <td>Arilds Solaris Barrique</td>
+          <td>Solaris</td>
+          <td>Vitt, ekfatlagrat</td>
+          <td>systembolaget.se</td>
+        </tr>
+        <tr>
+          <td>Arilds Marys Backe</td>
+          <td>Pinot Noir Precoce</td>
+          <td>Rött, lätt &amp; elegant</td>
+          <td>systembolaget.se</td>
+        </tr>
+        <tr>
+          <td>Arilds Bubbel SoMu</td>
+          <td>Solaris + Muscaris</td>
+          <td>Mousserande</td>
+          <td>systembolaget.se</td>
+        </tr>
+        <tr>
+          <td>Thora Vingård Heritage</td>
+          <td>Solaris</td>
+          <td>Vitt, ekfatlagrat</td>
+          <td>systembolaget.se <em>(ordervara)</em></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="wine-footnote">
+      ★ Arilds viner: kostnadsfritt till valfri butik. Thora Heritage = ordervara. Vejby säljer inte via Systembolaget.
+    </div>
+  </div>
+
+  <!-- Taxi + contacts -->
+  <div class="info-strip">
+    <div class="info-card red">
+      <h4>🚕 TAXI — BOKA I FÖRVÄG</h4>
+      <div class="big">0431-17 17 0</div>
+      <p>Taxi Ängelholm / Taxi Båstad. Ring gärna dagen före och förbeställ alla tre turerna på en gång.</p>
+    </div>
+    <div class="info-card">
+      <h4>📞 KONTAKTER</h4>
+      <p>
+        <strong>Ljungbyholms Vingård</strong><br>+46 79 304 43 47 · ljungbyholmsvingard.se
+      </p>
+      <p style="margin-top:6px;">
+        <strong>Vejby Vingård</strong><br>+46 70 772 92 59 · vejbyvingaard.com
+      </p>
+    </div>
+  </div>
+
+  <div class="footer">
+    🎭 Bjärehalvöns Vinteater presenterar · Lullig i NV-Skåne · 3–5 juli 2025 🎭
+  </div>
+</section>
+
+</body>
+</html>
