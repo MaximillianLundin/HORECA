@@ -1,0 +1,2794 @@
+{
+  "schema_version": "1.0",
+  "content_version": "2026-05-29-1",
+  "product": {
+    "slug": "cafe_station_1",
+    "name": "Café Station 1™",
+    "language": "en",
+    "support_email": "support@bluewatergroup.com",
+    "video_showcase": "12116945"
+  },
+  "issues": [
+    {
+      "slug": "no_water",
+      "title": "No water coming out",
+      "icon": "droplet-off",
+      "sort_order": 1,
+      "start_step": "noWater1",
+      "routing_keywords": [
+        "inget vatten",
+        "no water",
+        "kein wasser",
+        "pas d'eau",
+        "no sale agua",
+        "vatten kommer inte",
+        "no flow",
+        "inget flöde",
+        "water.*not.*com",
+        "inte.*vatten"
+      ]
+    },
+    {
+      "slug": "taste_bad",
+      "title": "Coffee is tasting off",
+      "icon": "flask",
+      "sort_order": 2,
+      "start_step": "tasteBad1",
+      "routing_keywords": [
+        "tds",
+        "smak",
+        "taste",
+        "geschmack",
+        "goût",
+        "sabe",
+        "mineral",
+        "dosering",
+        "dosing",
+        "för högt",
+        "för lågt",
+        "too high",
+        "too low"
+      ]
+    },
+    {
+      "slug": "lights",
+      "title": "Not all lights are on",
+      "icon": "alert-triangle",
+      "sort_order": 4,
+      "start_step": "lights1",
+      "routing_keywords": [
+        "blink",
+        "light",
+        "lamp",
+        "ljus",
+        "licht",
+        "voyant",
+        "luz",
+        "error",
+        "fel.*box",
+        "control.*box",
+        "kontrollbox",
+        "flashes",
+        "orange"
+      ]
+    },
+    {
+      "slug": "leak",
+      "title": "Leak or overflow",
+      "icon": "droplets",
+      "sort_order": 3,
+      "start_step": "leak1",
+      "routing_keywords": [
+        "läck",
+        "leak",
+        "leck",
+        "fuit",
+        "fuga",
+        "overflow",
+        "svämma",
+        "översvämm",
+        "débord",
+        "desbord",
+        "water on floor"
+      ]
+    },
+    {
+      "slug": "no_power",
+      "title": "No power to the system",
+      "icon": "power",
+      "sort_order": 5,
+      "start_step": "noPower1",
+      "routing_keywords": [
+        "start",
+        "ström",
+        "power",
+        "strom",
+        "alimentation",
+        "encien",
+        "slå på",
+        "turn on",
+        "einschalt",
+        "no lights",
+        "inga lampor"
+      ]
+    }
+  ],
+  "diagnostic_steps": {
+    "welcome": {
+      "question": "What problem are you experiencing?",
+      "help_text": "Select the option that best describes the situation.",
+      "image": null,
+      "image_alt": null,
+      "options": [
+        {
+          "label": "No water coming out",
+          "next": "step:noWater1",
+          "type": "primary"
+        },
+        {
+          "label": "Coffee is tasting off",
+          "next": "step:tasteBad1",
+          "type": "primary"
+        },
+        {
+          "label": "Leak or overflow",
+          "next": "step:leak1",
+          "type": "primary"
+        },
+        {
+          "label": "Not all lights are on",
+          "next": "step:lights1",
+          "type": "primary"
+        },
+        {
+          "label": "No power to the system",
+          "next": "step:noPower1",
+          "type": "primary"
+        },
+        {
+          "label": "Don't know / Other",
+          "next": "step:unknown1",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "noWater1": {
+      "question": "Look at the entire system — what do you see?",
+      "help_text": "Look at all the parts of the Café Station and the Bluewater Spirit under the counter.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Lights are on",
+          "next": "step:nw_tank",
+          "type": "primary"
+        },
+        {
+          "label": "Lights are blinking",
+          "next": "step:nw_which_unit",
+          "type": "primary"
+        },
+        {
+          "label": "All lights are off",
+          "next": "solution:nw_off",
+          "type": "secondary"
+        },
+        {
+          "label": "Some lights are off",
+          "next": "step:lights1",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "step:nw_tank",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_which_unit": {
+      "question": "Where is the problem?",
+      "help_text": "The Bluewater Spirit cleans the water. The Café Station controls dosing and flow.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "The Bluewater Spirit is blinking",
+          "next": "solution:spirit_blink",
+          "type": "primary"
+        },
+        {
+          "label": "The Café Station",
+          "next": "step:nw_cafe_behaviour",
+          "type": "primary"
+        },
+        {
+          "label": "All lights are on",
+          "next": "step:nw_tank",
+          "type": "secondary"
+        },
+        {
+          "label": "I just need to keep the café running now",
+          "next": "solution:bypass",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "step:nw_tank",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_cafe_behaviour": {
+      "question": "Which part is behaving wrong?",
+      "help_text": "The parts are the control box, dosing pump, and booster pump.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Control box buttons are off",
+          "next": "solution:check_power_source",
+          "type": "primary"
+        },
+        {
+          "label": "The dosing pump is not showing a steady blue light",
+          "next": "solution:lights_sol_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "The booster pump doesn’t activate when operating the coffee machine",
+          "next": "solution:noWater_sol_pump",
+          "type": "primary"
+        },
+        {
+          "label": "Don't know",
+          "next": "step:reset_hub",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_tank": {
+      "question": "Is there water in the pressureless tank?",
+      "help_text": "The pressureless tank is the transparent container under the counter. Check if there is water in it.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Yes, there is water",
+          "next": "solution:noWater_sol_connection",
+          "type": "primary"
+        },
+        {
+          "label": "No, there’s no water",
+          "next": "step:nw_tank_empty",
+          "type": "primary"
+        },
+        {
+          "label": "Don't know",
+          "next": "step:nw_tank_empty",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_tank_empty": {
+      "question": "The tank isn’t filling — what’s the cause?",
+      "help_text": "If the tank is empty and the system isn't refilling, the control box may be in the wrong mode, or the float switch that signals when to refill may not be properly connected.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Check the control box mode",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "primary"
+        },
+        {
+          "label": "Check the float switches",
+          "next": "solution:noWater_sol_float",
+          "type": "primary"
+        },
+        {
+          "label": "Lights are off",
+          "next": "solution:nw_off",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "reset_hub": {
+      "question": "Reset and reconnect the units",
+      "help_text": "Which part needs resetting? Reset the control box first, then reconnect the Dosing Pump.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Reset the control box (power + mode)",
+          "next": "solution:reset_controlbox",
+          "type": "primary"
+        },
+        {
+          "label": "Reconnect the Dosing Pump (Bluetooth)",
+          "next": "solution:reset_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "Check the Booster Pump power",
+          "next": "solution:reset_booster",
+          "type": "primary"
+        }
+      ]
+    },
+    "tasteBad1": {
+      "question": "How is the coffee off?",
+      "help_text": "Choose what best describes the problem.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Coffee is tasting very flat",
+          "next": "solution:tasteBad_sol_flat",
+          "type": "primary"
+        },
+        {
+          "label": "Coffee is tasting very acidic",
+          "next": "solution:tasteBad_sol_acidic",
+          "type": "primary"
+        },
+        {
+          "label": "The measured TDS is not according to standard",
+          "next": "step:tasteBad2_level",
+          "type": "primary"
+        },
+        {
+          "label": "I haven’t measured TDS yet",
+          "next": "solution:tasteBad_sol_measure",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "solution:tasteBad_sol_measure",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "tasteBad2_level": {
+      "question": "Is the TDS value too high or too low?",
+      "help_text": "Compare with your usual readings. Normal TDS depends on the dosing level you've selected.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Too high",
+          "next": "solution:tasteBad_sol_high",
+          "type": "primary"
+        },
+        {
+          "label": "Too low",
+          "next": "solution:tasteBad_sol_low",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "solution:tasteBad_sol_dontknow",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "tubing_q": {
+      "question": "What about the mineral tube?",
+      "help_text": "Choose what applies.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Mineral tubing is blocked",
+          "next": "solution:tasteBad_declog",
+          "type": "primary"
+        },
+        {
+          "label": "Dosing pump head is not spinning when the pressureless tank is refilling",
+          "next": "solution:tasteBad_sol_dosing_reconnect",
+          "type": "primary"
+        }
+      ]
+    },
+    "lights1": {
+      "question": "Which part is not showing a steady light?",
+      "help_text": "Look at the units under the counter. Which indicator is off or blinking instead of steady?",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "The control box",
+          "next": "solution:lights_sol_general",
+          "type": "primary"
+        },
+        {
+          "label": "There are no lights on the control box",
+          "next": "solution:check_power_source",
+          "type": "primary"
+        },
+        {
+          "label": "The dosing pump",
+          "next": "solution:lights_sol_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "The booster pump",
+          "next": "solution:lights_sol_booster",
+          "type": "primary"
+        },
+        {
+          "label": "The Bluewater Spirit",
+          "next": "solution:spirit_blink",
+          "type": "primary"
+        }
+      ]
+    },
+    "leak1": {
+      "question": "Where is the leak?",
+      "help_text": "Try to see where the water is coming from.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Tank is overflowing",
+          "next": "step:leak_tank_q",
+          "type": "primary"
+        },
+        {
+          "label": "Under the counter (hoses/connections)",
+          "next": "solution:leak_sol_under",
+          "type": "primary"
+        },
+        {
+          "label": "At the coffee machine",
+          "next": "solution:leak_sol_machine",
+          "type": "primary"
+        },
+        {
+          "label": "Don't know",
+          "next": "solution:leak_sol_general",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "leak_tank_q": {
+      "question": "Tank is overflowing",
+      "help_text": "Choose what you want to check.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": {
+        "text": "Immediately shut off the water supply — or pull the power plug to the Bluewater Spirit (purifier) — to stop the water from flowing."
+      },
+      "options": [
+        {
+          "label": "Check the float switches",
+          "next": "solution:leak_sol_tank_float",
+          "type": "primary"
+        },
+        {
+          "label": "Check the control box mode",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "primary"
+        }
+      ]
+    },
+    "noPower1": {
+      "question": "Is the power cable plugged in?",
+      "help_text": "Check that the cable is plugged into the control box and the wall outlet.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Yes, the cable is plugged in",
+          "next": "solution:noPower_sol_breaker",
+          "type": "primary"
+        },
+        {
+          "label": "No / Let me check",
+          "next": "solution:noPower_sol_cable",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "solution:noPower_sol_cable",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "unknown1": {
+      "question": "Let's start with the basics",
+      "help_text": "We'll ask a couple of questions to understand what's happening.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Next",
+          "next": "step:unknown2_water",
+          "type": "primary"
+        }
+      ]
+    },
+    "unknown2_water": {
+      "question": "Is water coming out of the faucet or machine?",
+      "help_text": null,
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Yes, water is coming out",
+          "next": "step:unknown3_lights",
+          "type": "primary"
+        },
+        {
+          "label": "No, no water",
+          "next": "step:noWater1",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "step:unknown3_lights",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "unknown3_lights": {
+      "question": "Are any lights on the control box?",
+      "help_text": "The control box is the small box under the counter with lights and buttons.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Yes, lights are on normally",
+          "next": "step:tasteBad1",
+          "type": "primary"
+        },
+        {
+          "label": "Yes, but lights are blinking strangely",
+          "next": "step:lights1",
+          "type": "primary"
+        },
+        {
+          "label": "No, no lights",
+          "next": "solution:nw_off",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know",
+          "next": "end:notResolved",
+          "type": "dont_know"
+        }
+      ]
+    }
+  },
+  "solutions": {
+    "purifier_lights_off": {
+      "title": "The purifier has no power",
+      "intro": "If the lights on the purifier are off, the unit has no power.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check that the power cable is firmly plugged in at both ends of the purifier.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Check that the wall outlet works — test with another device.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "If the lights are still off, contact the purifier supplier.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:purifier_unsupported"
+      }
+    },
+    "nw_off": {
+      "title": "Check the connections",
+      "intro": "If everything is dark it is usually power or a loose connection.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check the power cable is firmly seated in each unit (control box, dosing pump, booster).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Check the connectors between the units — press each one in firmly so there is no glitch.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Check the wall outlet works — test with another device.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Unplug and re-plug the cables at both ends to clear any loose contact.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:electrical_issue"
+      }
+    },
+    "noWater_sol_power": {
+      "title": "Check the power",
+      "intro": "",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Make sure the power cable is firmly plugged into the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Make sure the other end is in the wall outlet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Try unplugging and reconnecting at both ends.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Check that the wall outlet works — test with another device.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noWater_sol_pump": {
+      "title": "Check the booster pump",
+      "intro": "Check the connection between the pressureless tank and the booster pump. Make sure the hose fits securely at both ends and there are no kinks.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167633",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noWater_sol_float": {
+      "title": "Check the float switch",
+      "intro": "The float switch controls when water refills the tank. If the tank is not filling:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Disconnect the float switch cable from the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Reconnect it to the external port closest to the water outlet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Make sure the cable is securely connected.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167601",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:noWater_sol_tank_mode"
+      }
+    },
+    "noWater_sol_tank_mode": {
+      "title": "Check the control box mode",
+      "intro": "The control box may be in the wrong mode. Follow these steps:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Disconnect the power cable from the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Hold down the top button and reconnect the power cable.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Release the button when the bottom button starts blinking orange and blue.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Count the number of times the middle button blinks — it should blink evenly once per cycle (Mode 1).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "If it blinks two or more times and then skips a beat, it is in the wrong mode. Press the middle button until it blinks once per cycle.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167734",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noWater_sol_connection": {
+      "title": "Check connection between booster pump and coffee machine",
+      "intro": "Check the hose from the booster pump to the coffee machine. Make sure the connection is secure and the hose is not kinked.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167532",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:noWater_sol_tank_mode"
+      }
+    },
+    "spirit_blink": {
+      "title": "The Bluewater Spirit is blinking",
+      "intro": "The Bluewater Spirit purifies the water. It has three indicator lights — ON, FILTER and SERVICE. Open the manual below to compare, then choose the light pattern that matches what you see.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/Spirit-Blink-Codes.pdf",
+          "label": "Open Spirit light codes (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Which light pattern do you see?",
+      "options": [
+        {
+          "label": "SERVICE light is on (steady)",
+          "next": "solution:spirit_sol_service_on",
+          "type": "primary"
+        },
+        {
+          "label": "SERVICE light is flashing",
+          "next": "solution:spirit_sol_service_flash",
+          "type": "primary"
+        },
+        {
+          "label": "FILTER light is on or flashing",
+          "next": "solution:spirit_sol_filter",
+          "type": "primary"
+        },
+        {
+          "label": "ON + FILTER flashing fast (or noisy)",
+          "next": "solution:spirit_sol_pressure",
+          "type": "primary"
+        },
+        {
+          "label": "FILTER + SERVICE flashing fast",
+          "next": "solution:spirit_sol_overflow",
+          "type": "primary"
+        },
+        {
+          "label": "ON light is off",
+          "next": "solution:spirit_sol_power",
+          "type": "secondary"
+        },
+        {
+          "label": "My pattern is not in the list",
+          "next": "solution:spirit_sol_other",
+          "type": "secondary"
+        }
+      ]
+    },
+    "spirit_sol_service_on": {
+      "title": "SERVICE light is on (steady)",
+      "intro": "A steady SERVICE light means the water quality is not OK yet — do not drink the water yet.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Let the purified water run and wait up to 120 seconds for the SERVICE light to go off.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "If it does not go off, or the Bluewater Spirit has stopped: a recent filter change may have let air into the system. Disconnect the Spirit from power, reconnect it, and let it run its automatic flush.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "If the SERVICE light stays on after that, contact support to check the RO membrane.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_service_flash": {
+      "title": "SERVICE light is flashing",
+      "intro": "A slowly flashing SERVICE light is normal for the first 30 seconds after you open the faucet.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "If it keeps flashing slowly beyond 30 seconds, the RO water quality has decreased — the water is still safe to drink. Contact support to replace the RO membrane.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "If the SERVICE light flashes quickly instead, the water-quality sensors are not reading correctly — wait up to 120 seconds; if it does not clear or the unit stops, contact support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_filter": {
+      "title": "FILTER light is on or flashing",
+      "intro": "The FILTER light means the filter needs attention.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Flashing slowly: the filter is due for replacement soon.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Steady on: the filter replacement time has lapsed — replace it now.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Replace the filter (see the Bluewater Spirit manual below) or contact support to order and fit a new filter.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/Spirit-Purifier-Manual.pdf",
+          "label": "Open Bluewater Spirit manual (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_pressure": {
+      "title": "ON + FILTER flashing fast (or noisy)",
+      "intro": "The ON and FILTER lights flashing quickly (often with noise) means low inlet water pressure or a blockage.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check the inlet water supply is fully open.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Clean the inlet grid filter and check the main filter is not blocked.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "The Spirit automatically retries up to 10 times. Once pressure is restored it restarts — or hold the SERVICE button for 5 seconds to restart manually.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "If the inlet pressure is below 1.5 bar (22 psi) or the problem persists, contact support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_overflow": {
+      "title": "FILTER + SERVICE flashing fast",
+      "intro": "The FILTER and SERVICE lights flashing quickly means the leakage overflow protection has been activated.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Disconnect the Spirit from power.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Wipe the base plate dry.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Reconnect power. If the protection activates again, contact support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_power": {
+      "title": "ON light is off",
+      "intro": "The ON light being off means the Bluewater Spirit has no power.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check the Spirit’s power cord is firmly plugged in at both ends.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Check the wall outlet works — test it with another device.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "If the ON light flashes slowly while the FILTER and SERVICE lights are on, the faucet may not be fully closed, or there is a small leak — close the faucet fully; if it persists, disconnect power and check for leaks.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_other": {
+      "title": "My pattern is not in the list",
+      "intro": "If your pattern is not listed, open the Bluewater Spirit manual below and compare it with the light pattern you see, then follow the matching step. If you are still unsure, contact support and include a photo or short video of the control panel.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/Spirit-Blink-Codes.pdf",
+          "label": "Open Spirit light codes (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "reset_controlbox": {
+      "title": "Reset the control box (power + mode)",
+      "intro": "Resetting the control box clears a wrong mode or a float-switch error.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Disconnect the control box from power.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Hold down the top button and reconnect the power while holding it.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "When the bottom button starts blinking orange and blue, release the top button.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Watch the middle button and count its blinks. It should blink evenly, once per cycle — that is Mode 1 (correct).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "If it blinks two or more times and then pauses, it is in the wrong mode. Press the middle button until it blinks once per cycle.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Note: a float-switch error shows as the ON light plus both buttons flashing orange — make sure the tank is empty, then disconnect and reconnect the control box to power.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:factory_reset"
+      }
+    },
+    "reset_dosing": {
+      "title": "Reconnect the Dosing Pump (Bluetooth)",
+      "intro": "Reconnect (re-pair) the Dosing Pump if it is not dosing or not updating with a new mineral level.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Open the Bluewater Serve app → Settings → Manage Devices → Disconnect Dosing Pump.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Hold down the bottom button on the control box for 3 seconds — the control box bottom light flashes blue while it pairs.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "The Dosing Pump button starts blinking.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Press the blinking Dosing Pump button to reconnect.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Note: on the control box, the bottom light flashing blue = pairing a pump or Bluewater O; flashing orange = pairing a smart device (the app).",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:factory_reset"
+      }
+    },
+    "reset_booster": {
+      "title": "Check the Booster Pump power",
+      "intro": "The booster pump adjusts the water pressure to the coffee machine. It has no indicator light — only a power switch.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Make sure the booster pump’s power adapter is plugged in and the outlet works.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Check the red on/off rocker switch on the booster pump is pressed to I (on).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "When the coffee machine draws water, the booster should run (you can hear it). If it stays silent or its switch is dark, it has no power — fix the power supply or contact support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "factory_reset": {
+      "title": "Factory reset",
+      "intro": "A factory reset is a good first fix when the pump isn’t dosing properly even though the lights are on for both units. Reset both units, then re-pair them.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "In the Bluewater Serve app, open the menu and choose “Unpair dosing pump”.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Fully close the app — not just minimised, or it keeps the Bluetooth connection open.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Factory reset the control box: remove its power, then press and hold both buttons while reconnecting power and keep them held (both orange LEDs lit) until both lights go out — the reset is then done.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Factory reset the dosing pump: remove its power, press and hold the button on top of the pump head, and keep it held until the orange light goes out — the reset is then done.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Set the control box to Mode 1 (see “Reset the control box” for how).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 6,
+          "text": "Re-pair the dosing pump: hold the control box bottom button for 3 seconds, then press the blinking dosing-pump button.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 7,
+          "text": "Start the app again.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "This has worked if, after the reset, the RO water from the purifier gets mineralised as it passes through the control box to the faucet or pressureless tank.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "bypass": {
+      "title": "Quick fix: switch to bypass",
+      "intro": "The bypass routes tap water straight to the coffee machine so the café can keep serving while the fault is fixed.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": "quick",
+      "bypass": true,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Between the incoming tap water (from the wall) and the purifier there is a T-connector with a valve/switch with an orange tube.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Turn the valve a quarter turn to activate the bypass.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Tap water now flows into the coffee machine so you can keep serving.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_flat": {
+      "title": "Coffee tasting flat — mineral level is too high",
+      "intro": "Flat coffee is usually because the mineral level in the tank water is too high.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Test the water coming out of the purifier (TDS before mineralization) to verify the purification is accurate.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Make sure you are measuring TDS correctly and that your TDS meter follows the theoretical chart.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Open the TDS tool"
+        },
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Download TDS measurement guide (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_acidic": {
+      "title": "Coffee tasting acidic — mineral dosing is too low",
+      "intro": "Trigger a refill to check if the dosing pump is actually dosing.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Unplug the power cable from the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Plug it back in — this triggers the tank to refill.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Watch the dosing pump light during the refill — it should spin blue.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "NOTE: the blue light should only spin when the pressureless tank is refilling — not during a coffee shot. It not spinning during a shot is normal.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "What does the dosing pump light do during the refill?",
+      "options": [
+        {
+          "label": "Yes — it spins",
+          "next": "end:resolved",
+          "type": "primary"
+        },
+        {
+          "label": "No — it just stays blue",
+          "next": "solution:pair_control_dosing",
+          "type": "secondary"
+        },
+        {
+          "label": "The light is not on at all",
+          "next": "solution:lights_sol_dosing",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_declog": {
+      "title": "Mineral tube is blocked — clear crystals",
+      "intro": "If crystals are blocking the mineral tube, do this (done by service technicians at every visit):",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Unscrew the dosing pump and its bottom part from the mineral jug.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Disconnect the outlet mineral tube from the check valve and hold an empty cup under it.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Pour a cup of hot water (tea temperature).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Lower the mineral inlet tube into the hot water.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Press the blue button until the pump primes (green light), then flush the hot water through the system. This dissolves the crystals.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167682",
+          "showcase": "12116945"
+        },
+        {
+          "vimeo_id": "1162167569",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_dosing_reconnect": {
+      "title": "Reconnect the dosing pump",
+      "intro": "If dosing is still off, reconnect the dosing pump:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Open the Bluewater Serve app → Settings → Manage Devices → Disconnect Dosing Pump.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Hold down the bottom button on the control box for 3 seconds until the Dosing Pump button blinks.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Press the blinking button to reconnect.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_measure": {
+      "title": "How to measure TDS",
+      "intro": "",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Draw at least 1 liter of cold water from the Bluewater faucet and discard it.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Then draw 1 more liter into a bottle.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Dip the TDS meter into the bottle and wait a few seconds.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Read the value.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Important: Always measure COLD water, never hot. Make sure your meter uses 0.7 as the conversion factor.",
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Download TDS measurement guide (PDF)"
+        },
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Open the TDS tool"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "After measuring — what does the meter show?",
+      "options": [
+        {
+          "label": "The value seems too high",
+          "next": "solution:tasteBad_sol_high",
+          "type": "primary"
+        },
+        {
+          "label": "The value seems too low",
+          "next": "solution:tasteBad_sol_low",
+          "type": "secondary"
+        },
+        {
+          "label": "Don't know what it should be",
+          "next": "solution:tasteBad_sol_dontknow",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "tasteBad_sol_high": {
+      "title": "TDS is too high",
+      "intro": "",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check the dosing level in the Bluewater app or on the control box — it may be set too high.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Open the Bluewater app → Settings → Manage Devices → verify the dosing setting is correct.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Measure TDS directly from the purifier (BEFORE mineral dosing) by using the TDS measurement guide below and then adding that to the TDS Tool. If it reads above 10 ppm, the filter membrane or the pre-filters need to be replaced — contact Bluewater support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Download TDS measurement guide (PDF)"
+        },
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Open the TDS tool"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_low": {
+      "title": "TDS is too low",
+      "intro": "Check the dosing pump:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Make sure the Coffee Rock container is not empty — replace it if it has run out.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Ensure the dosing pump has power. The button should spin blue when the pressureless tank is refilling (not during a shot).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Check the silicone tube is connected to the check valve. If loose, reconnect it and secure with a zip tie.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Press the blue button on the dosing pump to manually prime it. Watch the silicone tube — you should see mineral fluid moving through it. If nothing moves, the tube is blocked.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167889",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Did the fluid move through the tube?",
+      "options": [
+        {
+          "label": "Yes, fluid is moving",
+          "next": "end:resolved",
+          "type": "primary"
+        },
+        {
+          "label": "No, the tube is blocked",
+          "next": "solution:tasteBad_declog",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_sol_dontknow": {
+      "title": "Check the dosing system",
+      "intro": "Try these steps:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Make sure the Coffee Rock container is not empty.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Make sure the dosing pump button spins blue during tank refill (not during a shot).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "The light on the dosing pump should be steady blue. The top light on the control box should be green. If the system is refilling the tank, the button below the green light will also be purple.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:tasteBad_sol_dosing_reconnect"
+      }
+    },
+    "lights_sol_general": {
+      "title": "Check the control box",
+      "intro": "The control box lights should be Green, or Green and Purple (when refilling the tank).\n\nTry these steps:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Turn off the control box by unplugging the power cable.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Wait 10 seconds.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Plug it back in.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "If lights still show abnormally after the restart, check which light is off or blinking:\n• Top light off → no power. Check the power adapter is plugged in at both ends.\n• Middle light off → water valves are closed. Press the 2nd button until it turns Blue (RO water) or Orange (municipal water).\n• Middle light blinking blue → stuck in Mode Programming Setup. Choose the correct mode and press the 3rd button to confirm.\n• Bottom light blinking → stuck in pairing mode. Unplug and replug the power to reset.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "If the control box is green, or green and purple while refilling the tank, the control box is working fine.\n\nIf the lights still blink abnormally, note which lights are on and contact support.",
+      "videos": [
+        {
+          "vimeo_id": "1162167734",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:reset_controlbox"
+      }
+    },
+    "lights_sol_dosing": {
+      "title": "Dosing pump light",
+      "intro": "To check whether the dosing pump is acting normally, pull the plug to the control box and put it back in. This forces a refill sequence of the water in the tank, which should make the blue light spin on top of the dosing pump. Wait ten seconds to fully see if it started.\n\nWhat does the dosing pump button show?\n• Blue (rotating) = dosing normally\n• Green = the pump is dosing — either because you are pressing and holding it, or because of a short circuit. If it is green and you are not pressing it, pull the power cord.\n• Off = not connected to power\nMake sure the pump is connected to power and the Coffee Rock container is not empty.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null,
+      "options": [
+        {
+          "label": "How to factory reset the dosing pump",
+          "next": "solution:factory_reset",
+          "type": "secondary"
+        },
+        {
+          "label": "That solved it!",
+          "next": "end:resolved",
+          "type": "primary"
+        },
+        {
+          "label": "Still not working",
+          "next": "end:notResolved",
+          "type": "secondary"
+        }
+      ]
+    },
+    "lights_sol_booster": {
+      "title": "Booster pump status",
+      "intro": "The booster pump has a red indicator light inside the on/off switch. Make sure it is lit red. It boosts the water pressure to the coffee machine.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check the booster pump’s power adapter is plugged in and the outlet works.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Make sure the red on/off rocker switch on the booster is pressed to I (on).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "When you operate the coffee machine, the booster should run and be audible. If it stays silent, it is not getting power or the switch is off — switch it on / restore power.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "If it has power but still does not run when the coffee machine draws water, contact support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_tank_float": {
+      "title": "Check the float switches",
+      "intro": "The float switch controls the water level in the tank.",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Immediately shut off the water supply — or pull the power plug to the Bluewater Spirit (purifier) — to stop the water from flowing."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check the float switch cable is secure in the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "If the problem persists, contact your Bluewater dealer.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167601",
+          "showcase": "12116945"
+        },
+        {
+          "vimeo_id": "1162167862",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_under": {
+      "title": "Leak under the counter",
+      "intro": "Check all hose connections under the counter:",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Immediately shut off the water supply — or pull the power plug to the Bluewater Spirit (purifier) — to stop the water from flowing."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Make sure the check valve and all connections are secure.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Check that the hoses are not cracked or damaged.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Tighten any connections that seem to be leaking by firmly pressing the John Guest tube into its connection.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167633",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_machine": {
+      "title": "Leak at the machine",
+      "intro": "Check the connection between the booster pump and the coffee machine:",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Immediately shut off the water supply — or pull the power plug to the Bluewater Spirit (purifier) — to stop the water from flowing."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Make sure the hose fits securely at both ends.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Check that the fitting at the machine is not damaged.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Tighten the connection if it’s loose.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167532",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_general": {
+      "title": "Find the leak",
+      "intro": "Follow these steps to find the leak:",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Immediately shut off the water supply — or pull the power plug to the Bluewater Spirit (purifier) — to stop the water from flowing."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Wipe up all water.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Place paper or a dry towel under all connections.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Wait a while and see where it gets wet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Tighten the leaking connection.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Physically go through all joints around the area with the leak and check for water. Push down the tube in the valve to stop any leaking.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "If you can't find the source, contact support.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noPower_sol_cable": {
+      "title": "Check the power cable",
+      "intro": "Plug the power cable securely into the control box and the wall outlet. Make sure the outlet works (test with another device).",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noPower_sol_breaker": {
+      "title": "Check the power supply",
+      "intro": "If the cable is plugged in but nothing happens:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check that the circuit breaker hasn't tripped.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Try a different wall outlet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Check that the cable is not damaged.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "electrical_issue": {
+      "title": "This looks like an electrical issue on site",
+      "intro": "If all connections are correct but there is still no power, the issue is likely with the electrical supply on site — not with the Bluewater product.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Contact the site manager or an electrician to check the power supply, circuit breaker, and outlets.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Still think it is a Bluewater product issue?",
+      "options": [
+        {
+          "label": "Yes — this is a Bluewater product malfunction",
+          "next": "end:notResolved",
+          "type": "secondary"
+        }
+      ]
+    },
+    "check_power_source": {
+      "title": "Check the power source",
+      "intro": "Check the electricity at the source to make sure there's power to the system.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "purifier_unsupported": {
+      "title": "Unfortunately, we can't help here",
+      "intro": "Unfortunately, we cannot help you with the purifier as it is not a Bluewater product. Please reach out to your sales representative for further assistance.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": null
+    },
+    "pair_control_dosing": {
+      "title": "Pair the control box to the dosing pump",
+      "intro": "Pair the dosing pump to the control box, then retest.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "On the control box, press and hold the bottom button until the big blue light on top of the dosing pump starts to blink and the button you pressed also blinks.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Press the light on the dosing pump head once to pair.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Retest: run the espresso machine for about one minute to force a small refill of the pressureless tank, and check that the blue light on the pump spins during the refill.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:factory_reset"
+      }
+    }
+  },
+  "escalation": {
+    "email": "support@bluewatergroup.com",
+    "phone": null,
+    "phone_tel": null,
+    "whatsapp": null,
+    "preferred_label": "preferred",
+    "intro": "If troubleshooting did not resolve the issue, contact Bluewater support:",
+    "local_support_msg": null,
+    "subject_hint": "Email subject: Site / System / Symptom / Urgency (e.g. \"Aurora–Café Station–No flow–Urgent\")",
+    "attach_hint": "Attach: photo of full installation, screenshot of About page in Bluewater Serve app, close-ups of tubing and lights, short video.",
+    "about_page_hint": "Open the Bluewater Serve app → About (connected to the Café Station) and have the software/firmware versions ready to show or email support."
+  },
+  "ui_strings": {
+    "start_title": "How can we help you?",
+    "start_describe": "Describe the problem",
+    "start_describe_sub": "Briefly describe what's happening and we'll find the right solution",
+    "start_troubleshoot": "Troubleshooting",
+    "start_troubleshoot_sub": "Click through step by step to find a solution",
+    "describe_title": "Describe the problem",
+    "describe_placeholder": "E.g. \"Café Station has no water since this morning\"",
+    "describe_hint": "Describe which product you have, what the general issue is, and when it started.",
+    "describe_submit": "Find solution",
+    "describe_analyzing": "Analyzing...",
+    "welcome_title": "What problem are you experiencing?",
+    "welcome_text": "Select the option that best describes the situation.",
+    "dont_know": "Don't know / Other",
+    "dont_know_short": "Don't know",
+    "yes": "Yes",
+    "no": "No",
+    "next": "Next",
+    "solution": "Solution",
+    "solved": "That solved it!",
+    "not_solved": "Still not working",
+    "restart": "Start over",
+    "watch_video": "Watch instruction video",
+    "tds_guide_link": "Download TDS measurement guide (PDF)",
+    "contact_support": "Contact support",
+    "contact_text": "If troubleshooting did not resolve the issue, contact Bluewater support:",
+    "contact_preferred": "preferred",
+    "contact_urgent": "phone for urgent downtime/leaks",
+    "contact_subject_hint": "Email subject: Site / System / Symptom / Urgency (e.g. \"Aurora–Café Station–No flow–Urgent\")",
+    "contact_attach_hint": "Attach: photo of full installation, screenshot of About page in Bluewater Serve app, close-ups of tubing and lights, short video.",
+    "success_title": "Great!",
+    "success_text": "Happy we could help. Thanks for using Café Station Support.",
+    "not_resolved_title": "Unfortunately we cannot help you here",
+    "need_help_step": "Need help with this step?",
+    "tools_needed_label": "You need",
+    "est_time_label": "approx",
+    "fix_type_quick": "Quick fix",
+    "fix_type_long": "Long-term fix",
+    "placeholder_label": "Draft – content needs to be added",
+    "about_page_label": "Show the app’s About page (firmware versions)",
+    "bypass_cta": "Quick fix: keep the café running (bypass)",
+    "local_support_msg": "Email us your problem and we will connect you to your local technical support as soon as possible.",
+    "contact_page_btn": "Go to contact page",
+    "contact_title": "Contact support",
+    "mail_to_label": "To",
+    "mail_subject_label": "Subject",
+    "mail_body_label": "Body",
+    "mail_open_btn": "Open in your email app",
+    "mail_subject_value": "Site / System / Symptom / Urgency — e.g. Aurora – Café Station – No flow – Urgent",
+    "mail_body_value": "Site address:\nOn-site contact:\nWhen it started:\nWhat changed:\n\nAttach: photo of the full installation, screenshot of the About page in the Bluewater Serve app, close-ups of tubing and lights, a short video of the issue."
+  }
+}

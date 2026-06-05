@@ -1,0 +1,2544 @@
+{
+  "schema_version": "1.0",
+  "content_version": "2026-05-29-1",
+  "product": {
+    "slug": "cafe_station_1",
+    "name": "Café Station 1™",
+    "language": "sv",
+    "support_email": "support@bluewatergroup.com",
+    "video_showcase": "12116945"
+  },
+  "issues": [
+    {
+      "slug": "no_water",
+      "title": "Inget vatten kommer ut",
+      "icon": "droplet-off",
+      "sort_order": 1,
+      "start_step": "noWater1",
+      "routing_keywords": [
+        "inget vatten",
+        "no water",
+        "kein wasser",
+        "pas d'eau",
+        "no sale agua",
+        "vatten kommer inte",
+        "no flow",
+        "inget flöde",
+        "water.*not.*com",
+        "inte.*vatten"
+      ]
+    },
+    {
+      "slug": "taste_bad",
+      "title": "Kaffet smakar fel",
+      "icon": "flask",
+      "sort_order": 2,
+      "start_step": "tasteBad1",
+      "routing_keywords": [
+        "tds",
+        "smak",
+        "taste",
+        "geschmack",
+        "goût",
+        "sabe",
+        "mineral",
+        "dosering",
+        "dosing",
+        "för högt",
+        "för lågt",
+        "too high",
+        "too low"
+      ]
+    },
+    {
+      "slug": "lights",
+      "title": "Inte alla lampor lyser",
+      "icon": "alert-triangle",
+      "sort_order": 3,
+      "start_step": "lights1",
+      "routing_keywords": [
+        "blink",
+        "light",
+        "lamp",
+        "ljus",
+        "licht",
+        "voyant",
+        "luz",
+        "error",
+        "fel.*box",
+        "control.*box",
+        "kontrollbox",
+        "flashes",
+        "orange"
+      ]
+    },
+    {
+      "slug": "leak",
+      "title": "Läckage eller overflow",
+      "icon": "droplets",
+      "sort_order": 4,
+      "start_step": "leak1",
+      "routing_keywords": [
+        "läck",
+        "leak",
+        "leck",
+        "fuit",
+        "fuga",
+        "overflow",
+        "svämma",
+        "översvämm",
+        "débord",
+        "desbord",
+        "water on floor"
+      ]
+    },
+    {
+      "slug": "no_power",
+      "title": "Ingen ström till systemet",
+      "icon": "power",
+      "sort_order": 5,
+      "start_step": "noPower1",
+      "routing_keywords": [
+        "start",
+        "ström",
+        "power",
+        "strom",
+        "alimentation",
+        "encien",
+        "slå på",
+        "turn on",
+        "einschalt",
+        "no lights",
+        "inga lampor"
+      ]
+    }
+  ],
+  "diagnostic_steps": {
+    "welcome": {
+      "question": "Vad upplever du för problem?",
+      "help_text": "Välj det alternativ som bäst beskriver situationen.",
+      "image": null,
+      "image_alt": null,
+      "options": [
+        {
+          "label": "Inget vatten kommer ut",
+          "next": "step:noWater1",
+          "type": "primary"
+        },
+        {
+          "label": "Kaffet smakar fel",
+          "next": "step:tasteBad1",
+          "type": "primary"
+        },
+        {
+          "label": "Inte alla lampor lyser",
+          "next": "step:lights1",
+          "type": "primary"
+        },
+        {
+          "label": "Läckage eller overflow",
+          "next": "step:leak1",
+          "type": "primary"
+        },
+        {
+          "label": "Ingen ström till systemet",
+          "next": "step:noPower1",
+          "type": "primary"
+        },
+        {
+          "label": "Vet ej / Annat",
+          "next": "step:unknown1",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "noWater1": {
+      "question": "Titta på hela systemet — vad ser du?",
+      "help_text": "Titta på alla delar av Café Station och Bluewater Spirit under bänken.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Lamporna lyser",
+          "next": "step:nw_tank",
+          "type": "primary"
+        },
+        {
+          "label": "Lamporna blinkar",
+          "next": "step:nw_which_unit",
+          "type": "primary"
+        },
+        {
+          "label": "Lamporna är släckta",
+          "next": "solution:nw_off",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "step:nw_tank",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_which_unit": {
+      "question": "Var sitter problemet?",
+      "help_text": "Bluewater Spirit renar vattnet. Café Station styr dosering och flöde.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Bluewater Spirit blinkar",
+          "next": "solution:spirit_blink",
+          "type": "primary"
+        },
+        {
+          "label": "Café Station",
+          "next": "step:nw_cafe_behaviour",
+          "type": "primary"
+        },
+        {
+          "label": "Alla lampor lyser",
+          "next": "step:nw_tank",
+          "type": "secondary"
+        },
+        {
+          "label": "Jag behöver bara hålla caféet igång nu",
+          "next": "solution:bypass",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "step:nw_tank",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_cafe_behaviour": {
+      "question": "Vilken del beter sig fel?",
+      "help_text": "Delarna är kontrollbox, doseringspump, booster och trycklös tank.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Kontrollboxens lampor är släckta eller visar mer än bara den gröna",
+          "next": "solution:lights_sol_general",
+          "type": "primary"
+        },
+        {
+          "label": "Doseringspumpen visar inte ett fast blått ljus",
+          "next": "solution:lights_sol_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "Boosterpumpen aktiveras inte när kaffemaskinen används",
+          "next": "solution:noWater_sol_pump",
+          "type": "primary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "step:reset_hub",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_tank": {
+      "question": "Finns det vatten i den trycklösa tanken?",
+      "help_text": "Den trycklösa tanken är den genomskinliga behållaren under bänken. Kolla om det finns vatten i den.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Ja, det finns vatten",
+          "next": "solution:noWater_sol_connection",
+          "type": "primary"
+        },
+        {
+          "label": "Nej, det finns inget vatten",
+          "next": "step:nw_tank_empty",
+          "type": "primary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "step:nw_tank_empty",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "nw_tank_empty": {
+      "question": "Tanken fylls inte — vad är orsaken?",
+      "help_text": "Välj vad du vill kontrollera.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Kontrollera kontrollboxens läge",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "primary"
+        },
+        {
+          "label": "Kontrollera flottörbrytarna",
+          "next": "solution:noWater_sol_float",
+          "type": "primary"
+        },
+        {
+          "label": "Lamporna är släckta",
+          "next": "solution:nw_off",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "reset_hub": {
+      "question": "Återställ och återanslut enheterna",
+      "help_text": "Vilken del behöver återställas? Återställ kontrollboxen först, återanslut sedan doseringspumpen.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Återställ kontrollboxen (ström + läge)",
+          "next": "solution:reset_controlbox",
+          "type": "primary"
+        },
+        {
+          "label": "Återanslut doseringspumpen (Bluetooth)",
+          "next": "solution:reset_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "Kontrollera boosterpumpens ström",
+          "next": "solution:reset_booster",
+          "type": "primary"
+        }
+      ]
+    },
+    "tasteBad1": {
+      "question": "Hur är kaffet fel?",
+      "help_text": "Välj det som bäst beskriver problemet.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Kaffet smakar väldigt platt",
+          "next": "solution:tasteBad_sol_flat",
+          "type": "primary"
+        },
+        {
+          "label": "Kaffet smakar väldigt syrligt",
+          "next": "solution:tasteBad_sol_acidic",
+          "type": "primary"
+        },
+        {
+          "label": "Uppmätt TDS stämmer inte med standard",
+          "next": "step:tasteBad2_level",
+          "type": "primary"
+        },
+        {
+          "label": "Jag har inte mätt TDS än",
+          "next": "solution:tasteBad_sol_measure",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "solution:tasteBad_sol_measure",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "tasteBad2_level": {
+      "question": "Är TDS-värdet för högt eller för lågt?",
+      "help_text": "Jämför med vad ni brukar ha. Normalt TDS-värde beror på vilken doseringsnivå ni valt.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "För högt",
+          "next": "solution:tasteBad_sol_high",
+          "type": "primary"
+        },
+        {
+          "label": "För lågt",
+          "next": "solution:tasteBad_sol_low",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "solution:tasteBad_sol_dontknow",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "tubing_q": {
+      "question": "Vad gäller mineralslangen?",
+      "help_text": "Välj det som stämmer.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Mineralslangen är blockerad",
+          "next": "solution:tasteBad_declog",
+          "type": "primary"
+        },
+        {
+          "label": "Doseringspumpens huvud snurrar inte när trycklösa tanken fylls på",
+          "next": "solution:tasteBad_sol_dosing_reconnect",
+          "type": "primary"
+        }
+      ]
+    },
+    "lights1": {
+      "question": "Vilken del visar inte ett fast ljus?",
+      "help_text": "Titta på enheterna under bänken. Vilken indikator är släckt eller blinkar istället för att lysa fast?",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Kontrollboxen",
+          "next": "solution:lights_sol_general",
+          "type": "primary"
+        },
+        {
+          "label": "Doseringspumpen",
+          "next": "solution:lights_sol_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "Boosterpumpen",
+          "next": "solution:lights_sol_booster",
+          "type": "primary"
+        },
+        {
+          "label": "Bluewater Spirit",
+          "next": "solution:spirit_blink",
+          "type": "primary"
+        }
+      ]
+    },
+    "leak1": {
+      "question": "Var läcker det?",
+      "help_text": "Försök se var vattnet kommer ifrån.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Tanken svämmar över",
+          "next": "step:leak_tank_q",
+          "type": "primary"
+        },
+        {
+          "label": "Under bänken (slangar/kopplingar)",
+          "next": "solution:leak_sol_under",
+          "type": "primary"
+        },
+        {
+          "label": "Vid kaffemaskinen",
+          "next": "solution:leak_sol_machine",
+          "type": "primary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "solution:leak_sol_general",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "leak_tank_q": {
+      "question": "Tanken svämmar över",
+      "help_text": "Välj vad du vill kontrollera.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": {
+        "text": "Stäng av vattentillförseln omedelbart — eller dra ur strömkontakten till Bluewater Spirit (renaren) — för att stoppa vattenflödet."
+      },
+      "options": [
+        {
+          "label": "Kontrollera flottörbrytarna",
+          "next": "solution:leak_sol_tank_float",
+          "type": "primary"
+        },
+        {
+          "label": "Kontrollera kontrollboxens läge",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "primary"
+        }
+      ]
+    },
+    "noPower1": {
+      "question": "Är strömkabeln inkopplad?",
+      "help_text": "Kolla att kabeln sitter i kontrollboxen och i vägguttaget.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Ja, kabeln sitter i",
+          "next": "solution:noPower_sol_breaker",
+          "type": "primary"
+        },
+        {
+          "label": "Nej / Jag kollar",
+          "next": "solution:noPower_sol_cable",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "solution:noPower_sol_cable",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "unknown1": {
+      "question": "Låt oss börja med grunderna",
+      "help_text": "Vi ställer ett par frågor för att förstå vad som händer.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Nästa",
+          "next": "step:unknown2_water",
+          "type": "primary"
+        }
+      ]
+    },
+    "unknown2_water": {
+      "question": "Kommer det vatten ur kranen eller maskinen?",
+      "help_text": null,
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Ja, det kommer vatten",
+          "next": "step:unknown3_lights",
+          "type": "primary"
+        },
+        {
+          "label": "Nej, inget vatten",
+          "next": "step:noWater1",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "step:unknown3_lights",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "unknown3_lights": {
+      "question": "Lyser några lampor på kontrollboxen?",
+      "help_text": "Kontrollboxen är den lilla boxen under bänken med lampor och knappar.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Ja, lampor lyser normalt",
+          "next": "step:tasteBad1",
+          "type": "primary"
+        },
+        {
+          "label": "Ja, men lampor blinkar konstigt",
+          "next": "step:lights1",
+          "type": "primary"
+        },
+        {
+          "label": "Nej, inga lampor",
+          "next": "solution:nw_off",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "end:notResolved",
+          "type": "dont_know"
+        }
+      ]
+    }
+  },
+  "solutions": {
+    "nw_off": {
+      "title": "Kontrollera anslutningarna",
+      "intro": "Om allt är släckt beror det oftast på ström eller glapp i en anslutning.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att strömkabeln sitter ordentligt i varje enhet (kontrollbox, doseringspump, booster).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Kontrollera kontakterna mellan enheterna — tryck in varje kontakt ordentligt så det inte glappar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Kontrollera att vägguttaget fungerar — testa med en annan apparat.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Dra ur och i kablarna i båda ändar för att rensa eventuella glapp.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noWater_sol_power": {
+      "title": "Kontrollera strömmen",
+      "intro": "",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att strömkabeln sitter ordentligt i kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Kontrollera att kabeln sitter i vägguttaget.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Prova att dra ur och sätta i kabeln igen i båda ändar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Kontrollera att vägguttaget fungerar — testa med en annan apparat.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noWater_sol_pump": {
+      "title": "Kontrollera boosterpumpen",
+      "intro": "Kontrollera anslutningen mellan den trycklösa tanken och boosterpumpen. Se till att slangen sitter ordentligt i båda ändar och att inga knutar finns på slangen.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167633",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noWater_sol_float": {
+      "title": "Kontrollera float-switchen",
+      "intro": "Float-switchen styr när vatten fylls på i tanken. Om tanken inte fylls:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Dra ur float-switchens kabel från kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Sätt tillbaka den i den externa porten som är närmast vattenutloppet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Se till att kabeln sitter ordentligt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167601",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:noWater_sol_tank_mode"
+      }
+    },
+    "noWater_sol_tank_mode": {
+      "title": "Kontrollera kontrollboxens läge",
+      "intro": "Kontrollboxen kan ha hamnat i fel läge. Gör så här:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Dra ur strömkabeln från kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Håll nere den övre knappen och sätt i kabeln igen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Släpp knappen när den nedre knappen börjar blinka orange och blått.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Räkna hur många gånger den mellersta knappen blinkar — det ska blinka jämnt en gång per cykel (läge 1).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Om den blinkar två eller fler gånger och tar paus är det fel läge — tryck på den mellersta knappen tills den blinkar en gång per cykel.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167734",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noWater_sol_connection": {
+      "title": "Kontrollera anslutningen mellan boosterpumpen och kaffemaskinen",
+      "intro": "Kontrollera slangen från boosterpumpen till kaffemaskinen. Se till att anslutningen sitter ordentligt och att slangen inte är knickad.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167532",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_blink": {
+      "title": "Bluewater Spirit blinkar",
+      "intro": "Bluewater Spirit renar vattnet. Den har tre indikatorlampor — ON, FILTER och SERVICE. Öppna manualen nedan och jämför, välj sedan det ljusmönster som stämmer med det du ser.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/Spirit-Blink-Codes.pdf",
+          "label": "Öppna Spirit ljuskoder (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Vilket ljusmönster ser du?",
+      "options": [
+        {
+          "label": "SERVICE-ljuset lyser fast",
+          "next": "solution:spirit_sol_service_on",
+          "type": "primary"
+        },
+        {
+          "label": "SERVICE-ljuset blinkar",
+          "next": "solution:spirit_sol_service_flash",
+          "type": "primary"
+        },
+        {
+          "label": "FILTER-ljuset lyser eller blinkar",
+          "next": "solution:spirit_sol_filter",
+          "type": "primary"
+        },
+        {
+          "label": "ON + FILTER blinkar snabbt (eller låter)",
+          "next": "solution:spirit_sol_pressure",
+          "type": "primary"
+        },
+        {
+          "label": "FILTER + SERVICE blinkar snabbt",
+          "next": "solution:spirit_sol_overflow",
+          "type": "primary"
+        },
+        {
+          "label": "ON-ljuset är släckt",
+          "next": "solution:spirit_sol_power",
+          "type": "secondary"
+        },
+        {
+          "label": "Mitt mönster finns inte i listan",
+          "next": "solution:spirit_sol_other",
+          "type": "secondary"
+        }
+      ]
+    },
+    "spirit_sol_service_on": {
+      "title": "SERVICE-ljuset lyser fast",
+      "intro": "Ett fast SERVICE-ljus betyder att vattenkvaliteten inte är OK än — drick inte vattnet än.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Låt det renade vattnet rinna och vänta upp till 120 sekunder tills SERVICE-ljuset slocknar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Om det inte slocknar, eller om Bluewater Spirit har stannat: ett nyligen gjort filterbyte kan ha släppt in luft i systemet. Dra ur strömmen till Spirit, sätt i den igen och låt den köra sin automatiska flush.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Om SERVICE-ljuset fortfarande lyser efter det, kontakta support för att kontrollera RO-membranet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_service_flash": {
+      "title": "SERVICE-ljuset blinkar",
+      "intro": "Ett långsamt blinkande SERVICE-ljus är normalt de första 30 sekunderna efter att du öppnat kranen.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Om det fortsätter blinka långsamt efter 30 sekunder har RO-vattenkvaliteten försämrats — vattnet är fortfarande säkert att dricka. Kontakta support för att byta RO-membranet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Om SERVICE-ljuset istället blinkar snabbt läser vattenkvalitetssensorerna fel — vänta upp till 120 sekunder; om det inte slocknar eller enheten stannar, kontakta support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_filter": {
+      "title": "FILTER-ljuset lyser eller blinkar",
+      "intro": "FILTER-ljuset betyder att filtret behöver åtgärdas.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Blinkar långsamt: filtret behöver snart bytas.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Lyser fast: filterbytestiden har passerats — byt det nu.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Byt filtret (se Bluewater Spirit-manualen nedan) eller kontakta support för att beställa och montera ett nytt filter.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/Spirit-Purifier-Manual.pdf",
+          "label": "Öppna Bluewater Spirit-manual (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_pressure": {
+      "title": "ON + FILTER blinkar snabbt (eller låter)",
+      "intro": "ON- och FILTER-ljuset blinkar snabbt (ofta med ljud) betyder lågt inkommande vattentryck eller en blockering.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att inkommande vatten är helt öppet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Rengör inloppsgallerfiltret och kontrollera att huvudfiltret inte är blockerat.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Spirit försöker automatiskt starta om upp till 10 gånger. När trycket återställts startar den om — eller håll in SERVICE-knappen i 5 sekunder för att starta om manuellt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Om inkommande tryck är under 1,5 bar (22 psi) eller problemet kvarstår, kontakta support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_overflow": {
+      "title": "FILTER + SERVICE blinkar snabbt",
+      "intro": "FILTER- och SERVICE-ljuset blinkar snabbt betyder att läckageskyddet (overflow) har aktiverats.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Dra ur strömmen till Spirit.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Torka bottenplattan torr.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Sätt i strömmen igen. Om skyddet aktiveras igen, kontakta support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_power": {
+      "title": "ON-ljuset är släckt",
+      "intro": "Ett släckt ON-ljus betyder att Bluewater Spirit inte har ström.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att Spirits strömkabel sitter ordentligt i båda ändar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Kontrollera att vägguttaget fungerar — testa med en annan apparat.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Om ON-ljuset blinkar långsamt medan FILTER- och SERVICE-ljuset lyser kan kranen inte vara helt stängd, eller så finns en liten läcka — stäng kranen helt; om det kvarstår, dra ur strömmen och kontrollera läckor.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "spirit_sol_other": {
+      "title": "Mitt mönster finns inte i listan",
+      "intro": "Om ditt mönster inte finns i listan, öppna Bluewater Spirit-manualen nedan och jämför med ljusmönstret du ser, och följ sedan rätt steg. Är du fortfarande osäker, kontakta support och bifoga ett foto eller en kort video av kontrollpanelen.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "docs/Spirit-Blink-Codes.pdf",
+          "label": "Öppna Spirit ljuskoder (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "reset_controlbox": {
+      "title": "Återställ kontrollboxen (ström + läge)",
+      "intro": "Att återställa kontrollboxen rensar fel läge eller ett flottörbrytar-fel.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Dra ur strömmen till kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Håll in den övre knappen och sätt i strömmen samtidigt som du håller den intryckt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "När den nedre knappen börjar blinka orange och blått, släpp den övre knappen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Titta på mittenknappen och räkna blinkningarna. Den ska blinka jämnt, en gång per cykel — det är Läge 1 (rätt).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Om den blinkar två eller fler gånger och sedan pausar är den i fel läge. Tryck på mittenknappen tills den blinkar en gång per cykel.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "OBS: ett flottörbrytar-fel visas som att ON-ljuset plus båda knapparna blinkar orange — se till att tanken är tom, dra sedan ur och sätt i strömmen till kontrollboxen igen.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:factory_reset"
+      }
+    },
+    "reset_dosing": {
+      "title": "Återanslut doseringspumpen (Bluetooth)",
+      "intro": "Återanslut (para om) doseringspumpen om den inte doserar eller inte uppdateras med en ny mineralnivå.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Öppna Bluewater Serve-appen → Inställningar → Hantera enheter → Koppla från doseringspumpen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Håll in den nedre knappen på kontrollboxen i 3 sekunder — kontrollboxens nedre lampa blinkar blått medan den parar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Doseringspumpens knapp börjar blinka.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Tryck på den blinkande doseringspump-knappen för att återansluta.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "OBS: på kontrollboxen betyder nedre lampan blinkar blått = parar en pump eller Bluewater O; blinkar orange = parar en smart enhet (appen).",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:factory_reset"
+      }
+    },
+    "reset_booster": {
+      "title": "Kontrollera boosterpumpens ström",
+      "intro": "Boosterpumpen anpassar vattentrycket till kaffemaskinen. Den har ingen indikatorlampa — bara en strömbrytare.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Se till att boosterpumpens strömadapter är isatt och att uttaget fungerar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Kontrollera att den röda på/av-vippknappen på boosterpumpen är intryckt på I (på).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "När kaffemaskinen drar vatten ska boostern gå igång (du hör den). Om den är tyst eller dess brytare är släckt har den ingen ström — åtgärda strömförsörjningen eller kontakta support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "factory_reset": {
+      "title": "Fabriksåterställning",
+      "intro": "En fabriksåterställning är en bra första åtgärd när doseringen inte fungerar trots att lamporna lyser på båda enheterna. Återställ båda enheterna och para sedan om dem.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Öppna menyn i Bluewater Serve-appen och välj \"Koppla från doseringspumpen\".",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Stäng appen helt — inte bara minimera, annars hålls Bluetooth-anslutningen öppen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Fabriksåterställ kontrollboxen: dra ur strömmen, håll sedan in båda knapparna samtidigt som du sätter i strömmen igen och håll dem intryckta (båda orange lamporna lyser) tills båda lamporna slocknar — då är återställningen klar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Fabriksåterställ doseringspumpen: dra ur strömmen, håll in knappen ovanpå pumphuvudet och håll den intryckt tills den orange lampan slocknar — då är återställningen klar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Sätt kontrollboxen i Läge 1 (se \"Återställ kontrollboxen\" för hur).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 6,
+          "text": "Para om doseringspumpen: håll in kontrollboxens nedre knapp i 3 sekunder och tryck sedan på den blinkande doseringspump-knappen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 7,
+          "text": "Starta appen igen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Det har lyckats om RO-vattnet från renaren mineraliseras när det passerar genom kontrollboxen ut till kranen eller den trycklösa tanken.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "bypass": {
+      "title": "Snabbfix: koppla in bypass",
+      "intro": "Bypass leder kranvatten direkt till kaffemaskinen så caféet kan fortsätta servera medan felet åtgärdas.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": "quick",
+      "bypass": true,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Mellan inkommande kranvatten (från väggen) och renaren sitter en T-koppling med en ventil/switch med orange slang.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Vrid ventilen ett kvarts varv för att aktivera bypass.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Nu släpps kranvatten in i kaffemaskinen så ni kan fortsätta servera.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_flat": {
+      "title": "Kaffet smakar platt — mineralnivån är för hög",
+      "intro": "Platt kaffe beror oftast på att mineralnivån i tankvattnet är för hög.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Testa vattnet som kommer ut ur renaren (TDS före mineralisering) för att verifiera att reningen är korrekt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Säkerställ att du mäter TDS rätt och att din TDS-mätare följer den teoretiska tabellen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Öppna TDS-verktyget"
+        },
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Ladda ner TDS-mätningsguide (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_acidic": {
+      "title": "Kaffet smakar syrligt — mineraldoseringen är för låg",
+      "intro": "Syrligt kaffe beror oftast på att mineraldoseringen är för låg.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Flusha den trycklösa tanken tills systemet börjar fylla på, och kontrollera att den blå lampan på doseringspumpen snurrar under tankpåfyllningen (då doserar den).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Kontrollera att mineralbehållaren (Coffee Rock) inte är tom.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Kontrollera mineralslangen — inga knickar eller blockeringar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "OBS: den blå lampan ska bara snurra när den trycklösa tanken fylls på — inte under en kaffeshot. Att den inte snurrar under en shot är normalt.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "step:tubing_q"
+      }
+    },
+    "tasteBad_declog": {
+      "title": "Mineralslangen är blockerad — rensa kristaller",
+      "intro": "Om kristaller blockerar mineralslangen, gör så här (görs av servicetekniker vid varje besök):",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Skruva loss doseringspumpen och dess nedre del från mineralburken.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Koppla loss utlopps-mineralslangen från backventilen och håll en tom kopp under.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Häll upp en kopp hett vatten (te-temperatur).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Sänk ner mineral-inloppsslangen i det heta vattnet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Tryck på den blå knappen tills pumpen primar (grön lampa), och flusha sedan det heta vattnet genom systemet. Detta löser upp kristallerna.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_dosing_reconnect": {
+      "title": "Återanslut doseringspumpen",
+      "intro": "Om doseringen fortfarande är fel, återanslut doseringspumpen:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Öppna Bluewater Serve-appen → Inställningar → Hantera enheter → Koppla från doseringspumpen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Håll nere den nedre knappen på kontrollboxen i 3 sekunder tills doseringspumpens knapp blinkar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Tryck på den blinkande knappen för att återansluta.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_measure": {
+      "title": "Så här mäter du TDS",
+      "intro": "",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Tappa minst 1 liter kallt vatten från Bluewater-kranen och häll bort det.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Tappa sedan 1 liter till i en flaska.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Doppa TDS-mätaren i flaskan och vänta några sekunder.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Läs av värdet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Viktigt: Mät alltid på KALLT vatten, aldrig varmt. Se till att din mätare använder 0.7 som konverteringsfaktor.",
+      "videos": [
+        {
+          "vimeo_id": "1162167734",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Ladda ner TDS-mätningsguide (PDF)"
+        },
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Öppna TDS-verktyget"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "När du har mätt — vad visar mätaren?",
+      "options": [
+        {
+          "label": "Värdet verkar för högt",
+          "next": "solution:tasteBad_sol_high",
+          "type": "primary"
+        },
+        {
+          "label": "Värdet verkar för lågt",
+          "next": "solution:tasteBad_sol_low",
+          "type": "secondary"
+        },
+        {
+          "label": "Vet ej vad det ska vara",
+          "next": "solution:tasteBad_sol_dontknow",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "tasteBad_sol_high": {
+      "title": "TDS är för högt",
+      "intro": "",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera doseringsnivån i Bluewater-appen eller på kontrollboxen — den kan stå för högt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Mät TDS direkt från reningssteget (INNAN mineraldoseringen). Om det visar över 10 ppm kan filtermembranet behöva bytas — kontakta Bluewater-support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Öppna Bluewater-appen → Inställningar → Hantera enheter → verifiera att doseringsinställningen är korrekt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167734",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Ladda ner TDS-mätningsguide (PDF)"
+        },
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Öppna TDS-verktyget"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_low": {
+      "title": "TDS är för lågt",
+      "intro": "Kontrollera doseringspumpen:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Se att Coffee Rock-kanistern inte är tom — byt ut den om den är slut.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Se att doseringspumpen har ström. Knappen ska snurra blått när den trycklösa tanken fylls på (inte under en shot).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Kontrollera att silikonslangen sitter i backventilen. Sitter den löst, sätt på den igen och fäst med buntband.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167889",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "step:tubing_q"
+      }
+    },
+    "tasteBad_sol_dontknow": {
+      "title": "Kontrollera doseringssystemet",
+      "intro": "Prova dessa steg:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Se att Coffee Rock-kanistern inte är tom.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Se att doseringspumpens knapp snurrar blått under tankpåfyllning (inte under en shot).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:tasteBad_sol_dosing_reconnect"
+      }
+    },
+    "lights_sol_general": {
+      "title": "Kontrollera kontrollboxen",
+      "intro": "Prova dessa steg:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Stäng av kontrollboxen genom att dra ur strömkabeln.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Vänta 10 sekunder.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Koppla in den igen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Om lamporna fortfarande blinkar onormalt, notera vilka lampor som lyser och kontakta support.",
+      "videos": [
+        {
+          "vimeo_id": "1162167734",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:reset_controlbox"
+      }
+    },
+    "lights_sol_dosing": {
+      "title": "Problem med doseringslampan",
+      "intro": "Vad visar doseringspumpens lampa?\n• Blå (roterande) = pumpar normalt\n• Orange = låg Coffee Rock-nivå — byt kanister\n• Orange (roterande) = pumpar men Coffee Rock håller på att ta slut — byt snart\n• Grön = knappen är intryckt, pumpen kör\n• Av = pumpen är inte ansluten till ström\nKontrollera att pumpen är ansluten till ström och att mineralkanistern inte är tom.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:tasteBad_sol_dosing_reconnect"
+      }
+    },
+    "lights_sol_booster": {
+      "title": "Boosterpumpens status",
+      "intro": "Boosterpumpen har ingen indikatorlampa — den har bara en strömbrytare. Den höjer vattentrycket till kaffemaskinen.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att boosterpumpens strömadapter är isatt och att uttaget fungerar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Se till att den röda på/av-vippknappen på boostern är intryckt på I (på).",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "När du använder kaffemaskinen ska boostern gå igång och höras. Om den är tyst får den ingen ström eller så är brytaren av — slå på den / återställ strömmen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Om den har ström men ändå inte går igång när kaffemaskinen drar vatten, kontakta support.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_tank_float": {
+      "title": "Kontrollera flottörbrytarna",
+      "intro": "Flottörbrytaren reglerar vattennivån i tanken.",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Stäng av vattentillförseln omedelbart — eller dra ur strömkontakten till Bluewater Spirit (renaren) — för att stoppa vattenflödet."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att flottörbrytarens kabel sitter ordentligt i kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Om problemet kvarstår, kontakta din Bluewater-återförsäljare.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167601",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_under": {
+      "title": "Läckage under bänken",
+      "intro": "Kontrollera alla slanganslutningar under bänken:",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Stäng av vattentillförseln omedelbart — eller dra ur strömkontakten till Bluewater Spirit (renaren) — för att stoppa vattenflödet."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att backventilen och alla kopplingar sitter ordentligt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Se att slangarna inte är spruckna eller skadade.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Dra åt anslutningar som verkar läcka genom att trycka in John Guest-slangen ordentligt i kopplingen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167682",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_machine": {
+      "title": "Läckage vid maskinen",
+      "intro": "Kontrollera anslutningen mellan boosterpumpen och kaffemaskinen:",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Stäng av vattentillförseln omedelbart — eller dra ur strömkontakten till Bluewater Spirit (renaren) — för att stoppa vattenflödet."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Se att slangen sitter ordentligt i båda ändar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Kontrollera att kopplingen vid maskinen inte är skadad.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Dra åt anslutningen om den är lös.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167532",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "leak_sol_general": {
+      "title": "Hitta läckaget",
+      "intro": "Gör så här för att hitta var det läcker:",
+      "estimated_time_minutes": null,
+      "severity": "high",
+      "safety_warning": {
+        "text": "Stäng av vattentillförseln omedelbart — eller dra ur strömkontakten till Bluewater Spirit (renaren) — för att stoppa vattenflödet."
+      },
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Torka upp allt vatten.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Lägg papper eller en torr handduk under alla anslutningar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Vänta en stund och se var det blir vått.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Dra åt den anslutning som läcker.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Om du inte hittar källan, kontakta support.",
+      "videos": [
+        {
+          "vimeo_id": "1162167317",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noPower_sol_cable": {
+      "title": "Kontrollera strömkabeln",
+      "intro": "Koppla in strömkabeln ordentligt i kontrollboxen och i vägguttaget. Se till att uttaget fungerar (testa med en annan apparat).",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "noPower_sol_breaker": {
+      "title": "Kontrollera elförsörjningen",
+      "intro": "Om kabeln sitter i men inget händer:",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att säkringen/strömbrytaren inte har löst ut.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Prova ett annat vägguttag.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Kontrollera att kabeln inte är skadad.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [
+        {
+          "vimeo_id": "1162167825",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    }
+  },
+  "escalation": {
+    "email": "support@bluewatergroup.com",
+    "phone": null,
+    "phone_tel": null,
+    "whatsapp": null,
+    "preferred_label": "föredragen",
+    "intro": "Om felsökningen inte löste problemet, kontakta Bluewater support:",
+    "local_support_msg": null,
+    "subject_hint": "Ämnesrad: Plats / System / Symptom / Prioritet (t.ex. \"Aurora–Café Station–Inget flöde–Akut\")",
+    "attach_hint": "Bifoga: foto på installationen, skärmbild från Bluewater Serve-appen (Om-sidan), närbild på slangar och lampor, kort video.",
+    "about_page_hint": "Öppna Bluewater Serve-appen → About (ansluten till Café Station) och ha mjukvaru-/firmware-versionerna redo att visa eller maila support."
+  },
+  "ui_strings": {
+    "start_title": "Hur kan vi hjälpa dig?",
+    "start_describe": "Beskriv problemet",
+    "start_describe_sub": "Beskriv kort vad som händer så hittar vi rätt lösning",
+    "start_troubleshoot": "Felsökning",
+    "start_troubleshoot_sub": "Klicka dig steg för steg till en lösning",
+    "describe_title": "Beskriv problemet",
+    "describe_placeholder": "T.ex. \"Café Station ger inget vatten sedan imorse\"",
+    "describe_hint": "Beskriv vilken produkt du har, vad det generella felet är och när det började.",
+    "describe_submit": "Hitta lösning",
+    "describe_analyzing": "Analyserar...",
+    "welcome_title": "Vad upplever du för problem?",
+    "welcome_text": "Välj det alternativ som bäst beskriver situationen.",
+    "dont_know": "Vet ej / Annat",
+    "dont_know_short": "Vet ej",
+    "yes": "Ja",
+    "no": "Nej",
+    "next": "Nästa",
+    "solution": "Lösning",
+    "solved": "Det löste problemet!",
+    "not_solved": "Fungerar fortfarande inte",
+    "restart": "Börja om",
+    "watch_video": "Se instruktionsvideo",
+    "tds_guide_link": "Ladda ner TDS-mätningsguide (PDF)",
+    "contact_support": "Kontakta support",
+    "contact_text": "Om felsökningen inte löste problemet, kontakta Bluewater support:",
+    "contact_preferred": "föredragen",
+    "contact_urgent": "telefon för akuta driftstopp/läckage",
+    "contact_subject_hint": "Ämnesrad: Plats / System / Symptom / Prioritet (t.ex. \"Aurora–Café Station–Inget flöde–Akut\")",
+    "contact_attach_hint": "Bifoga: foto på installationen, skärmbild från Bluewater Serve-appen (Om-sidan), närbild på slangar och lampor, kort video.",
+    "success_title": "Toppen!",
+    "success_text": "Glad att vi kunde hjälpa. Tack för att du använde Café Station Support.",
+    "not_resolved_title": "Tyvärr kan vi inte hjälpa dig här",
+    "need_help_step": "Behöver du hjälp med det här steget?",
+    "tools_needed_label": "Du behöver",
+    "est_time_label": "ca",
+    "fix_type_quick": "Snabbfix",
+    "fix_type_long": "Långsiktig fix",
+    "placeholder_label": "Utkast – innehåll behöver fyllas i",
+    "about_page_label": "Visa appens About-sida (firmware-versioner)",
+    "bypass_cta": "Snabbfix: håll caféet igång (bypass)",
+    "local_support_msg": "Maila ditt problem till oss så kopplar vi dig till din lokala tekniska support så snart som möjligt.",
+    "contact_page_btn": "Gå till kontaktsidan",
+    "contact_title": "Kontakta support",
+    "mail_to_label": "Till",
+    "mail_subject_label": "Ämne",
+    "mail_body_label": "Meddelande",
+    "mail_open_btn": "Öppna i e-postappen",
+    "mail_subject_value": "Plats / System / Symptom / Prioritet — t.ex. Aurora – Café Station – Inget flöde – Akut",
+    "mail_body_value": "Plats/adress:\nKontaktperson på plats:\nNär började det:\nVad har ändrats:\n\nBifoga: foto på hela installationen, skärmbild av Om-sidan i Bluewater Serve-appen, närbilder på slangar och lampor, kort video av problemet."
+  }
+}

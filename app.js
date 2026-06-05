@@ -1,60 +1,153 @@
-// Supabase setup
+// ==========================================
+// Café Station Support — data-driven engine
+// Loads knowledge from Supabase Storage (with local + cache fallback)
+// ==========================================
+
+// ---- Config ----
 const SUPABASE_URL = 'https://ghudwqytclfpiouzqzvc.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdodWR3cXl0Y2xmcGlvdXpxenZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTk0MTIsImV4cCI6MjA5MDA5NTQxMn0.DoDwit2k5NRkt6x5EynQg3RJ5CrlqaTH5U6Ufgf-MoY';
+const KB_REMOTE_BASE = SUPABASE_URL + '/storage/v1/object/public/cafe-station-knowledge';
+const KB_LOCAL_BASE = 'data';
 const REPORT_EMAIL = 'maximillian.lundin@bluewatergroup.com';
-const SUPPORT_EMAIL = 'support@bluewatergroup.com';
-const SUPPORT_PHONE = '+46 72 601 85 85';
 
-// Video IDs
-const VIDEOS = {
-  full:           '1162167317',
-  dosingPump:     '1162167496',
-  boosterMachine: '1162167532',
-  mineralTube:    '1162167569',
-  floatSwitch:    '1162167601',
-  boosterPump:    '1162167633',
-  checkValve:     '1162167682',
-  footprint:      '1162167706',
-  changeModes:    '1162167734',
-  espressoMode:   '1162167757',
-  controlDosing:  '1162167800',
-  mountControl:   '1162167825',
-  troubleshoot:   '1162167862',
-  priming:        '1162167889',
-  powerOn:        '1162167921',
-};
-
-const SHOWCASE_URL = 'https://vimeo.com/showcase/12116945';
-
-// Language
-window.currentLang = localStorage.getItem('cafestation_lang') || 'sv';
-
-// Supabase
+// ---- Supabase client (session logging only) ----
 let db;
 try {
   const { createClient } = window.supabase || {};
-  if (createClient) {
-    db = createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch (e) {
-  console.warn('Supabase could not be initialized:', e);
-}
+  if (createClient) db = createClient(SUPABASE_URL, SUPABASE_KEY);
+} catch (e) { console.warn('Supabase could not be initialized:', e); }
 
-// Session tracking
+// ---- State ----
+window.currentLang = localStorage.getItem('cafestation_lang') || 'sv';
+let KB = null;                       // knowledge base for current language
+let currentProduct = null;
+let currentPurifier = null;          // 'spirit' | 'pro' | 'cleone' | 'other' | null
+let history = [];                    // stack of targets: 'product' | 'purifier' | 'start' | 'describe' | 'step:x' | 'solution:y' | 'end:z'
+
+// Options that only apply when a Bluewater Spirit purifier is connected (hidden for Other brand)
+const SPIRIT_ONLY_NEXTS = new Set([]);
+
+// For Other brand: reroute these destinations to a simpler alternative
+const OTHER_REROUTE = { 'solution:spirit_blink': 'solution:purifier_lights_off' };
+
 let session = { id: null, startTime: Date.now(), steps: [], product: 'cafe_station' };
 let inactivityTimer = null;
 const INACTIVITY_TIMEOUT = 30 * 60 * 1000;
 
+// ==========================================
+// KNOWLEDGE LOADING
+// ==========================================
+async function loadKB(lang) {
+  const cacheKey = 'cafestation_kb_' + lang;
+  // Dev override: ?src=local loads the bundled data/ files first and skips cache.
+  const preferLocal = new URLSearchParams(location.search).get('src') === 'local';
+  let cached = null;
+  if (!preferLocal) { try { cached = JSON.parse(localStorage.getItem(cacheKey)); } catch (e) {} }
+
+  const remote = KB_REMOTE_BASE + '/cafe-station.' + lang + '.json';
+  const local = KB_LOCAL_BASE + '/cafe-station.' + lang + '.json';
+  const sources = preferLocal ? [local, remote] : [remote, local];
+  for (const url of sources) {
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.schema_version) {
+          if (!preferLocal) localStorage.setItem(cacheKey, JSON.stringify(data));
+          return data;
+        }
+      }
+    } catch (e) { /* try next source */ }
+  }
+  if (cached) return cached;            // last resort: stale cache
+  return null;
+}
+
+// Purifier name helpers — used to substitute "Bluewater Spirit" in KB text at render time
+function purifierName() {
+  if (!currentPurifier || currentPurifier === 'spirit') return 'Bluewater Spirit';
+  if (currentPurifier === 'pro') return 'Bluewater PRO';
+  if (currentPurifier === 'cleone') return 'Bluewater Cleone';
+  return 'purifier';
+}
+function purifierShort() {
+  if (!currentPurifier || currentPurifier === 'spirit') return 'Spirit';
+  if (currentPurifier === 'pro') return 'PRO';
+  if (currentPurifier === 'cleone') return 'Cleone';
+  return 'purifier';
+}
+function subP(text) {
+  if (!text) return text;
+  const name = purifierName();
+  const short = purifierShort();
+  const isOther = currentPurifier === 'other';
+  return text
+    .replace(/\bthe Bluewater Spirit\b/g,    isOther ? 'the purifier'       : 'the ' + name)
+    .replace(/\bBluewater Spirit\b/g,         name)
+    .replace(/\bthe Spirit's\b/g,             isOther ? "the purifier's"    : 'the ' + short + "'s")
+    .replace(/\bSpirit's\b/g,                 isOther ? "the purifier's"    : short + "'s")
+    .replace(/\bthe Spirit\b/g,               isOther ? 'the purifier'      : 'the ' + short)
+    .replace(/\bSpirit\b/g,                   short)
+    .replace(/\bthe purifier \(purifier\)/g,  'the purifier');
+}
+
+// UI string lookup: KB first, then legacy translations.js t(), then raw key
+function ui(key) {
+  if (KB && KB.ui_strings && KB.ui_strings[key] != null) return KB.ui_strings[key];
+  if (typeof t === 'function') { const v = t(key); if (v != null) return v; }
+  return key;
+}
+
+function pickerStrings() {
+  const m = {
+    sv: {
+      // mode picker
+      mode_h: 'Hur kan vi hjälpa dig?', mode_sub: 'Välj ett alternativ för att fortsätta',
+      mode_install: 'Installation', mode_install_sub: 'Se installationsvideor',
+      mode_support: 'Support', mode_support_sub: 'Felsök ditt system',
+      // product picker (support)
+      h: 'Vilken produkt behöver du hjälp med?', sub: 'Välj produkt för att fortsätta',
+      cafe: 'Tryck för att börja', spirit: 'Tryck för att börja',
+      // purifier picker
+      purifier_h: 'Vilken reningsstation används med Café Station?', purifier_sub: 'Välj din reningsstation för att fortsätta',
+      purifier_pro: 'Bluewater PRO', purifier_spirit: 'Bluewater Spirit', purifier_cleone: 'Bluewater Cleone',
+      purifier_other: 'Annat märke', purifier_unknown: 'Vet ej',
+      // installation picker
+      install_h: 'Vilken produkt installerar du?', install_sub: 'Välj produkt för att se installationsvideo',
+      soon: 'Kommer snart',
+    },
+    en: {
+      // mode picker
+      mode_h: 'What can we help you with?', mode_sub: 'Choose an option to continue',
+      mode_install: 'Installation', mode_install_sub: 'Watch installation videos',
+      mode_support: 'Support', mode_support_sub: 'Troubleshoot your system',
+      // product picker (support)
+      h: 'Which product do you need help with?', sub: 'Choose a product to continue',
+      cafe: 'Tap to start', spirit: 'Tap to start',
+      // purifier picker
+      purifier_h: 'Which purifier are you using with the Café Station?', purifier_sub: 'Select your purifier to continue',
+      purifier_pro: 'Bluewater PRO', purifier_spirit: 'Bluewater Spirit', purifier_cleone: 'Bluewater Cleone',
+      purifier_other: 'Other brand', purifier_unknown: "Don't know",
+      // installation picker
+      install_h: 'Which product are you installing?', install_sub: 'Choose a product to watch the installation video',
+      soon: 'Coming soon',
+    },
+  };
+  return m[window.currentLang] || m.en;
+}
+function sevLabel() { return window.currentLang === 'sv' ? 'Säkerhet' : 'Safety'; }
+
+// ==========================================
+// SESSION LOGGING (behavior unchanged)
+// ==========================================
 function resetInactivityTimer() {
   clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => endSession(false, true), INACTIVITY_TIMEOUT);
 }
-
 function recordStep(question, answer) {
   session.steps.push({ question, answer, timestamp: new Date().toISOString() });
   resetInactivityTimer();
 }
-
 async function createSession() {
   if (!db) return;
   try {
@@ -62,7 +155,6 @@ async function createSession() {
     if (data) session.id = data.id;
   } catch (e) { console.warn('Could not create session:', e); }
 }
-
 async function endSession(resolved, timedOut) {
   clearTimeout(inactivityTimer);
   const duration = Math.round((Date.now() - session.startTime) / 1000);
@@ -71,93 +163,477 @@ async function endSession(resolved, timedOut) {
     try {
       await db.from('support_sessions').update({
         steps: session.steps, resolved, final_solution: lastStep ? lastStep.question : null,
-        session_duration_seconds: duration, inactive_timeout: timedOut || false
+        session_duration_seconds: duration, inactive_timeout: timedOut || false,
       }).eq('id', session.id);
     } catch (e) { console.warn('Could not update session:', e); }
   }
   if (resolved !== undefined) sendEmailReport(resolved, timedOut, duration);
 }
-
 function sendEmailReport(resolved, timedOut, duration) {
   const stepsText = session.steps.map((s, i) => `${i + 1}. ${s.question} → ${s.answer}`).join('\n');
   console.log('Session report:', { resolved, timedOut, duration, steps: stepsText });
 }
 
-// History for back navigation
-let stepHistory = [];
+// ==========================================
+// UI HELPERS
+// ==========================================
+const cardEl = () => document.getElementById('card');
+function setProgress(p) { const f = document.getElementById('progressFill'); if (f) f.style.width = p + '%'; }
+function showProgressBar(show) { const b = document.querySelector('.progress-bar'); if (b) b.style.visibility = show ? 'visible' : 'hidden'; }
+function animateCard() { const c = cardEl(); if (!c) return; c.style.animation = 'none'; c.offsetHeight; c.style.animation = 'fadeIn 0.3s ease'; }
+function esc(s) { return (s == null ? '' : String(s)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function nl2br(s) { return esc(s).replace(/\n/g, '<br>'); }
+function btnClass(type) { return type === 'dont_know' ? 'btn-dont-know' : type === 'secondary' ? 'btn-secondary' : type === 'restart' ? 'btn-restart' : 'btn-primary'; }
 
-function pushHistory(stepName) {
-  stepHistory.push(stepName);
+function imageHtml(src, alt) {
+  if (!src) return '';
+  return `<div class="media-img"><img src="${esc(src)}" alt="${esc(alt || '')}" loading="lazy"></div>`;
 }
-
-// UI helpers
-function setProgress(percent) {
-  document.getElementById('progressFill').style.width = percent + '%';
+function audioHtml(src, label) {
+  if (!src) return '';
+  return `<div class="media-audio">${label ? `<span class="media-audio-label">${esc(label)}</span>` : ''}<audio controls preload="none" src="${esc(src)}"></audio></div>`;
 }
-
-function goBack() {
-  if (stepHistory.length > 1) {
-    stepHistory.pop(); // remove current
-    const prev = stepHistory.pop(); // get previous (will be re-pushed when called)
-    if (steps[prev]) steps[prev]();
-  } else {
-    steps.start();
-  }
+function videoEmbed(v) {
+  if (!v || !v.vimeo_id) return '';
+  const show = v.showcase || (KB && KB.product && KB.product.video_showcase) || '';
+  const src = show
+    ? `https://vimeo.com/showcase/${show}/embed2?video=${v.vimeo_id}&autoplay=0`
+    : `https://player.vimeo.com/video/${v.vimeo_id}`;
+  return `<div class="video-wrapper"><div class="video-container"><iframe src="${src}" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" frameborder="0" allowfullscreen></iframe></div></div>`;
 }
-
-function videoLink(videoId) {
-  if (!videoId) return '';
-  return `<div class="video-wrapper">
-    <div class="video-container">
-      <iframe src="https://vimeo.com/showcase/12116945/embed2?video=${videoId}&autoplay=0"
-        allow="autoplay; fullscreen; picture-in-picture; gyroscope; accelerometer; clipboard-write; encrypted-media; web-share"
-        frameborder="0" allowfullscreen></iframe>
-    </div>
+function safetyHtml(text) {
+  return `<div class="safety-warn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span>${esc(text)}</span></div>`;
+}
+function aboutPageHtml() {
+  const e = (KB && KB.escalation) || {};
+  return `<div class="about-block">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    <div><strong>${esc(ui('about_page_label'))}</strong>${e.about_page_hint ? `<p>${esc(e.about_page_hint)}</p>` : ''}</div>
   </div>`;
 }
+function backBtnHtml() { return history.length > 1 ? `<button class="btn-back" id="backBtn" aria-label="Back">&larr;</button>` : ''; }
+function bindBack() { const b = document.getElementById('backBtn'); if (b) b.onclick = goBack; }
 
-function renderStep(config) {
-  const card = document.getElementById('card');
-  card.style.animation = 'none';
-  card.offsetHeight;
-  card.style.animation = 'fadeIn 0.3s ease';
+function progressFor(isSolution) {
+  if (isSolution) return 80;
+  return Math.min(15 + history.length * 10, 65);
+}
 
-  let html = '';
-  if (stepHistory.length > 1) {
-    html += `<button class="btn-back" id="backBtn">&larr;</button>`;
+// ==========================================
+// NAVIGATION
+// ==========================================
+function navTo(target, record) {
+  if (record) recordStep(record.question, record.answer);
+  history.push(target);
+  renderTarget(target);
+}
+function goBack() {
+  if (history.length > 1) {
+    history.pop();
+    renderTarget(history[history.length - 1]);
+  } else {
+    showProductPicker();
   }
-  if (config.title) html += `<h2>${config.title}</h2>`;
-  if (config.text) html += `<p>${config.text}</p>`;
-  if (config.solution) {
-    html += `<div class="solution-box"><h3>${t('solution')}</h3><p>${config.solution.text}</p></div>`;
-    if (config.solution.videoId) html += videoLink(config.solution.videoId);
-    if (config.solution.docUrl) html += `<a href="${config.solution.docUrl}" target="_blank" class="btn btn-doc">${config.solution.docLabel || t('tds_guide_link')}</a>`;
+}
+function renderTarget(target) {
+  if (target === 'mode') return renderModePicker();
+  if (target === 'install') return renderInstallationPicker();
+  if (target === 'install:cafe_station') return renderInstallationVideo();
+  if (target === 'product') return renderProductPicker();
+  if (target === 'purifier') return renderPurifierPicker();
+  if (target === 'start') return renderStartScreen();
+  if (target === 'describe') return renderDescribe();
+  const [kind, id] = target.split(':');
+  if (kind === 'step') return renderQuestion(id);
+  if (kind === 'solution') return renderSolution(id);
+  if (kind === 'end') return id === 'resolved' ? renderResolved() : renderNotResolved();
+  return renderNotResolved();
+}
+
+function showModePicker() { currentPurifier = null; history = ['mode']; renderModePicker(); }
+function showProductPicker() { currentPurifier = null; history = ['mode', 'product']; renderProductPicker(); }
+function showStart() { history = ['mode', 'product']; navTo('start'); }
+function restart() {
+  session = { id: null, startTime: Date.now(), steps: [], product: 'cafe_station' };
+  createSession();
+  showModePicker();
+}
+
+// ==========================================
+// SCREENS
+// ==========================================
+function renderModePicker() {
+  showProgressBar(false);
+  setProgress(0);
+  animateCard();
+  const L = pickerStrings();
+  cardEl().innerHTML = `
+    <h2 class="picker-h">${esc(L.mode_h)}</h2>
+    <p class="picker-sub">${esc(L.mode_sub)}</p>
+    <div class="prod-grid">
+      <button class="prod" id="modeInstall">
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <span class="prod-name">${esc(L.mode_install)}</span>
+        <span class="prod-tag">${esc(L.mode_install_sub)}</span>
+      </button>
+      <button class="prod" id="modeSupport">
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <span class="prod-name">${esc(L.mode_support)}</span>
+        <span class="prod-tag">${esc(L.mode_support_sub)}</span>
+      </button>
+    </div>`;
+  document.getElementById('modeInstall').onclick = () => navTo('install');
+  document.getElementById('modeSupport').onclick = () => navTo('product');
+}
+
+function renderInstallationPicker() {
+  showProgressBar(false);
+  setProgress(0);
+  animateCard();
+  const L = pickerStrings();
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2 class="picker-h">${esc(L.install_h)}</h2>
+    <p class="picker-sub">${esc(L.install_sub)}</p>
+    <div class="prod-grid">
+      <button class="prod" id="installCafe">
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+        <span class="prod-name">Café Station</span>
+        <span class="prod-tag">${esc(L.mode_install_sub)}</span>
+      </button>
+      <button class="prod disabled" disabled aria-disabled="true">
+        <span class="soon">${esc(L.soon)}</span>
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11h16"/><path d="M6 11V7a6 6 0 0 1 12 0v4"/><path d="M5 11l1.5 8a2 2 0 0 0 2 1.7h7a2 2 0 0 0 2-1.7L20 11"/></svg></div>
+        <span class="prod-name">Brew Station</span>
+        <span class="prod-tag">${esc(L.soon)}</span>
+      </button>
+      <button class="prod disabled" disabled aria-disabled="true">
+        <span class="soon">${esc(L.soon)}</span>
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <span class="prod-name">Bluewater PRO</span>
+        <span class="prod-tag">${esc(L.soon)}</span>
+      </button>
+      <button class="prod disabled" disabled aria-disabled="true">
+        <span class="soon">${esc(L.soon)}</span>
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+        <span class="prod-name">Bluewater Spirit</span>
+        <span class="prod-tag">${esc(L.soon)}</span>
+      </button>
+    </div>`;
+  bindBack();
+  document.getElementById('installCafe').onclick = () => navTo('install:cafe_station');
+}
+
+function renderInstallationVideo() {
+  showProgressBar(true);
+  setProgress(50);
+  animateCard();
+  const showcase = KB && KB.product && KB.product.video_showcase ? KB.product.video_showcase : '12116945';
+  const src = `https://vimeo.com/showcase/${showcase}/embed2?video=1162167317&autoplay=0`;
+  const sv = window.currentLang === 'sv';
+  // Installation chapters (showcase clips). Labels inferred — confirm against official Vimeo titles.
+  const chapters = [
+    { id: '1162167921', label: sv ? 'Ström och anslutningar' : 'Power & connections' },
+    { id: '1162167633', label: sv ? 'Boosterpump' : 'Booster pump' },
+    { id: '1162167601', label: sv ? 'Flottörbrytare' : 'Float switch' },
+    { id: '1162167862', label: sv ? 'Flottörbrytare (forts.)' : 'Float switches' },
+    { id: '1162167734', label: sv ? 'Lägen på kontrollboxen' : 'Control box modes' },
+    { id: '1162167532', label: sv ? 'Boosterpump till kaffemaskin' : 'Booster pump to coffee machine' },
+    { id: '1162167682', label: sv ? 'Rensa mineralslangen' : 'Clear the mineral tube' },
+    { id: '1162167569', label: sv ? 'Mineralslang' : 'Mineral tube' },
+    { id: '1162167800', label: sv ? 'Doseringspump' : 'Dosing pump' },
+    { id: '1162167889', label: sv ? 'TDS för lågt' : 'TDS too low' },
+  ];
+  const chaptersHtml = chapters.map(c => `
+    <div class="install-chapter">
+      <h3 class="install-chapter-title">${esc(c.label)}</h3>
+      <div class="video-wrapper"><div class="video-container"><iframe src="https://vimeo.com/showcase/${showcase}/embed2?video=${c.id}&autoplay=0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" frameborder="0" allowfullscreen></iframe></div></div>
+    </div>`).join('');
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2>Café Station Installation</h2>
+    <p>${sv ? 'Se hela installationsvideon nedan.' : 'Watch the full installation video below.'}</p>
+    <div class="video-wrapper"><div class="video-container"><iframe src="${src}" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" frameborder="0" allowfullscreen></iframe></div></div>
+    <h3 class="install-chapters-h">${sv ? 'Kapitel' : 'Chapters'}</h3>
+    ${chaptersHtml}
+    <button class="btn btn-restart" id="installDoneBtn">${sv ? 'Tillbaka till start' : 'Back to start'}</button>`;
+  bindBack();
+  document.getElementById('installDoneBtn').onclick = showModePicker;
+}
+
+function renderProductPicker() {
+  showProgressBar(false);
+  setProgress(0);
+  animateCard();
+  const L = pickerStrings();
+  cardEl().innerHTML = `
+    <h2 class="picker-h">${esc(L.h)}</h2>
+    <p class="picker-sub">${esc(L.sub)}</p>
+    <div class="prod-grid">
+      <button class="prod" id="prodCafe">
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+        <span class="prod-name">Café Station</span>
+        <span class="prod-tag">${esc(L.cafe)}</span>
+      </button>
+      <button class="prod disabled" disabled aria-disabled="true">
+        <span class="soon">${esc(L.soon)}</span>
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+        <span class="prod-name">Bluewater Spirit</span>
+        <span class="prod-tag">${esc(L.soon)}</span>
+      </button>
+      <button class="prod disabled" disabled aria-disabled="true">
+        <span class="soon">${esc(L.soon)}</span>
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11h16"/><path d="M6 11V7a6 6 0 0 1 12 0v4"/><path d="M5 11l1.5 8a2 2 0 0 0 2 1.7h7a2 2 0 0 0 2-1.7L20 11"/></svg></div>
+        <span class="prod-name">Brew Station</span>
+        <span class="prod-tag">${esc(L.soon)}</span>
+      </button>
+    </div>`;
+  document.getElementById('prodCafe').onclick = () => { currentProduct = 'cafe_station'; currentPurifier = null; navTo('purifier'); };
+}
+
+function renderPurifierPicker() {
+  showProgressBar(true);
+  setProgress(5);
+  animateCard();
+  const L = pickerStrings();
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2>${esc(L.purifier_h)}</h2>
+    <p class="picker-sub">${esc(L.purifier_sub)}</p>
+    <div class="options">
+      <button class="btn btn-primary" id="purSpirit">${esc(L.purifier_spirit)}</button>
+      <button class="btn btn-secondary" id="purOther">${esc(L.purifier_other)}</button>
+      <button class="btn btn-dont-know" id="purUnknown">${esc(L.purifier_unknown)}</button>
+    </div>`;
+  bindBack();
+  const pick = (purifier, label) => { currentPurifier = purifier; recordStep(L.purifier_h, label); navTo('start'); };
+  document.getElementById('purSpirit').onclick = () => pick('spirit', L.purifier_spirit);
+  document.getElementById('purOther').onclick = () => pick('other', L.purifier_other);
+  document.getElementById('purUnknown').onclick = () => pick('spirit', L.purifier_unknown);
+}
+
+function renderStartScreen() {
+  showProgressBar(true);
+  setProgress(8);
+  animateCard();
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2>${esc(ui('start_title'))}</h2>
+    <div class="start-grid">
+      <button class="start-card" id="startDescribe">
+        <div class="start-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <span class="start-card-title">${esc(ui('start_describe'))}</span>
+        <span class="start-card-sub">${esc(ui('start_describe_sub'))}</span>
+      </button>
+      <button class="start-card" id="startTroubleshoot">
+        <div class="start-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <span class="start-card-title">${esc(ui('start_troubleshoot'))}</span>
+        <span class="start-card-sub">${esc(ui('start_troubleshoot_sub'))}</span>
+      </button>
+    </div>`;
+  bindBack();
+  document.getElementById('startDescribe').onclick = () => { recordStep(ui('start_title'), ui('start_describe')); navTo('describe'); };
+  document.getElementById('startTroubleshoot').onclick = () => { recordStep(ui('start_title'), ui('start_troubleshoot')); navTo('step:welcome'); };
+}
+
+function renderDescribe() {
+  showProgressBar(true);
+  setProgress(12);
+  animateCard();
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2>${esc(ui('describe_title'))}</h2>
+    <textarea class="describe-input" id="describeInput" placeholder="${esc(ui('describe_placeholder'))}" rows="4"></textarea>
+    <p class="describe-hint">${esc(ui('describe_hint'))}</p>
+    <button class="btn btn-primary" id="describeSubmit">${esc(ui('describe_submit'))}</button>`;
+  bindBack();
+  const input = document.getElementById('describeInput');
+  const submit = document.getElementById('describeSubmit');
+  input.focus();
+  submit.onclick = () => {
+    const text = input.value.trim();
+    if (!text) return;
+    recordStep(ui('describe_title'), text);
+    submit.textContent = ui('describe_analyzing');
+    submit.disabled = true;
+    setTimeout(() => routeFromDescription(text), 400);
+  };
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit.click(); } });
+}
+
+function routeFromDescription(text) {
+  const lower = text.toLowerCase();
+  for (const iss of (KB.issues || [])) {
+    const kws = iss.routing_keywords || [];
+    if (kws.length) {
+      try { if (new RegExp(kws.join('|'), 'i').test(lower)) return navTo('step:' + iss.start_step, { question: ui('describe_title'), answer: iss.title }); }
+      catch (e) {}
+    }
   }
-  if (config.success) {
-    html += `<div class="success-box"><h3>${config.success.title}</h3><p>${config.success.text}</p></div>`;
+  navTo('step:welcome');
+}
+
+function renderQuestion(id) {
+  const node = KB.diagnostic_steps[id];
+  if (!node) return renderNotResolved();
+  showProgressBar(true);
+  setProgress(progressFor(false));
+  animateCard();
+  const options = node.options
+    .filter(o => !(currentPurifier === 'other' && SPIRIT_ONLY_NEXTS.has(o.next)))
+    .map(o => (currentPurifier === 'other' && OTHER_REROUTE[o.next])
+      ? { ...o, next: OTHER_REROUTE[o.next] } : o);
+  let html = backBtnHtml();
+  html += `<h2>${esc(subP(node.question))}</h2>`;
+  if (node.safety_warning && node.safety_warning.text) html += safetyHtml(subP(node.safety_warning.text));
+  if (node.help_text) html += `<p>${nl2br(subP(node.help_text))}</p>`;
+  if (node.image) html += imageHtml(node.image, node.image_alt);
+  html += '<div class="options">';
+  options.forEach((o, i) => { html += `<button class="btn ${btnClass(o.type)}" data-i="${i}">${esc(subP(o.label))}</button>`; });
+  html += '</div>';
+  cardEl().innerHTML = html;
+  bindBack();
+  cardEl().querySelectorAll('button[data-i]').forEach((btn) => {
+    const o = options[+btn.dataset.i];
+    btn.onclick = () => navTo(o.next, { question: node.question, answer: o.label });
+  });
+}
+
+function renderSolution(id) {
+  let s = KB.solutions[id];
+  if (!s) return renderNotResolved();
+  // For Other brand: replace the RO-membrane step in tasteBad_sol_high with a purifier-supplier redirect
+  if (currentPurifier === 'other' && id === 'tasteBad_sol_high') {
+    s = { ...s, steps: s.steps.map(st => st.number === 3 ? { ...st, text: 'Measure TDS directly from the purifier output (before mineral dosing). If it reads above 10 ppm, the filter in the purifier may need attention — contact the purifier supplier.' } : st) };
   }
-  if (config.contact) {
-    html += `<div class="contact-box"><h3>${t('contact_support')}</h3><p>${t('contact_text')}</p>
-      <p><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a></p>
-      <p><a href="https://wa.me/46726018585">${SUPPORT_PHONE}</a> (${t('whatsapp')})</p></div>`;
-  }
-  if (config.options) {
-    html += '<div class="options">';
-    config.options.forEach(opt => {
-      const cls = opt.type === 'dont-know' ? 'btn-dont-know' : opt.type === 'secondary' ? 'btn-secondary' : opt.type === 'restart' ? 'btn-restart' : 'btn-primary';
-      html += `<button class="btn ${cls}" data-action="${opt.action}">${opt.label}</button>`;
+  showProgressBar(true);
+  setProgress(progressFor(true));
+  animateCard();
+  let html = backBtnHtml();
+
+  // meta chips
+  let chips = '';
+  if (s.fix_type === 'quick') chips += `<span class="chip chip-quick">${esc(ui('fix_type_quick'))}</span>`;
+  if (s.fix_type === 'long_term') chips += `<span class="chip chip-long">${esc(ui('fix_type_long'))}</span>`;
+  if (s.estimated_time_minutes) chips += `<span class="chip chip-time">⏱ ${esc(ui('est_time_label') || '~')} ${s.estimated_time_minutes} min</span>`;
+  if (s.severity === 'high') chips += `<span class="chip chip-sev-high">${esc(sevLabel())}</span>`;
+  if (s.tools_needed && s.tools_needed.length) chips += `<span class="chip chip-tools">${esc((ui('tools_needed_label') || '') + ': ' + s.tools_needed.join(', '))}</span>`;
+  if (s._placeholder) chips += `<span class="chip chip-draft">${esc(ui('placeholder_label'))}</span>`;
+  if (chips) html += `<div class="sol-meta">${chips}</div>`;
+
+  html += `<h2>${esc(subP(s.title))}</h2>`;
+  if (s.intro) html += `<p class="sol-intro">${nl2br(subP(s.intro))}</p>`;
+  if (s.safety_warning && s.safety_warning.text) html += safetyHtml(subP(s.safety_warning.text));
+  if (s.about_page_required) html += aboutPageHtml();
+
+  if (s.steps && s.steps.length) {
+    html += '<div class="sol-steps">';
+    s.steps.forEach((st) => {
+      html += `<div class="sol-step"><div class="sol-step-num">${st.number}</div><div class="sol-step-body"><div class="sol-step-text">${nl2br(subP(st.text))}</div>`;
+      html += imageHtml(st.image, st.image_alt);
+      html += imageHtml(st.gif, st.image_alt);
+      html += audioHtml(st.audio, st.audio_label);
+      if (st.badge && st.badge.text) html += `<span class="step-badge">${esc(st.badge.text)}</span>`;
+      html += `</div></div>`;
     });
     html += '</div>';
   }
-  card.innerHTML = html;
-  const backBtn = card.querySelector('#backBtn');
-  if (backBtn) backBtn.addEventListener('click', goBack);
-  card.querySelectorAll('button[data-action]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const action = btn.getAttribute('data-action');
-      if (steps[action]) { recordStep(config.title || '', btn.textContent); steps[action](); }
-    });
+  if (s.note) html += `<div class="sol-note">${nl2br(subP(s.note))}</div>`;
+
+  (s.videos || []).forEach((v) => { html += videoEmbed(v); });
+  (s.documents || []).forEach((d) => { html += `<a href="${esc(d.url)}" target="_blank" class="btn btn-doc">${esc(d.label)}</a>`; });
+
+  if (s.photo_gallery && s.photo_gallery.length) {
+    html += '<div class="photo-gallery">';
+    s.photo_gallery.forEach((p) => { html += `<figure>${imageHtml(p.url, p.caption)}${p.caption ? `<figcaption>${esc(p.caption)}</figcaption>` : ''}</figure>`; });
+    html += '</div>';
+  }
+
+  if (s.options) {
+    if (s.after_text) html += `<p class="afterq">${esc(s.after_text)}</p>`;
+    html += '<div class="options">';
+    s.options.forEach((o, i) => { html += `<button class="btn ${btnClass(o.type)}" data-i="${i}">${esc(o.label)}</button>`; });
+    html += '</div>';
+  } else if (s.follow_up) {
+    html += '<div class="options">';
+    html += `<button class="btn btn-primary" data-fu="solved">${esc(s.follow_up.solved_label)}</button>`;
+    html += `<button class="btn btn-secondary" data-fu="not_solved">${esc(s.follow_up.not_solved_label)}</button>`;
+    html += '</div>';
+  }
+
+  if (ui('need_help_step')) html += `<a class="help-link" id="helpLink">${esc(ui('need_help_step'))} &rarr;</a>`;
+
+  cardEl().innerHTML = html;
+  bindBack();
+  cardEl().querySelectorAll('button[data-i]').forEach((btn) => {
+    const o = s.options[+btn.dataset.i];
+    btn.onclick = () => navTo(o.next, { question: s.title, answer: o.label });
   });
+  cardEl().querySelectorAll('button[data-fu]').forEach((btn) => {
+    btn.onclick = () => {
+      if (btn.dataset.fu === 'solved') navTo(s.follow_up.solved_next || 'end:resolved', { question: s.title, answer: s.follow_up.solved_label });
+      else navTo(s.follow_up.not_solved_next || 'end:notResolved', { question: s.title, answer: s.follow_up.not_solved_label });
+    };
+  });
+  const help = document.getElementById('helpLink');
+  if (help) help.onclick = () => navTo('end:notResolved', { question: s.title, answer: ui('need_help_step') });
+}
+
+function renderResolved() {
+  showProgressBar(true);
+  setProgress(100);
+  endSession(true, false);
+  animateCard();
+  cardEl().innerHTML = `
+    <div class="success-box"><h3>${esc(ui('success_title'))}</h3><p>${esc(ui('success_text'))}</p></div>
+    <button class="btn btn-restart" id="restartBtn">${esc(ui('restart'))}</button>`;
+  document.getElementById('restartBtn').onclick = restart;
+}
+
+function renderNotResolved() {
+  showProgressBar(true);
+  setProgress(100);
+  endSession(false, false);
+  animateCard();
+  const e = (KB && KB.escalation) || {};
+  const phone = e.phone ? `<p><a href="tel:${esc(e.phone_tel || '')}">${esc(e.phone)}</a></p>` : '';
+  const hasBypass = KB && KB.solutions && KB.solutions.bypass;
+  const mailSubject = ui('mail_subject_value') || e.subject_hint || '';
+  const mailBody = ui('mail_body_value') || e.attach_hint || '';
+  const mailHref = `mailto:${e.email || ''}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2>${esc(ui('not_resolved_title'))}</h2>
+    ${e.about_page_hint ? aboutPageHtml() : ''}
+    <div class="contact-box">
+      <h3>${esc(ui('contact_support'))}</h3>
+      ${e.local_support_msg ? `<p>${esc(e.local_support_msg)}</p>` : `<p>${esc(e.intro || ui('contact_text'))}</p>`}
+      ${phone}
+      <div class="mail-template">
+        <p class="mail-row"><span class="mail-label">${esc(ui('mail_to_label'))}</span> <a href="mailto:${esc(e.email || '')}">${esc(e.email || '')}</a></p>
+        <p class="mail-row"><span class="mail-label">${esc(ui('mail_subject_label'))}</span> ${esc(mailSubject)}</p>
+        <p class="mail-row"><span class="mail-label">${esc(ui('mail_body_label'))}</span></p>
+        <pre class="mail-body">${esc(mailBody)}</pre>
+      </div>
+      <a class="btn btn-mail" href="${mailHref}">${esc(ui('mail_open_btn'))}</a>
+    </div>
+    ${hasBypass ? `<button class="btn btn-bypass" id="bypassBtn">${esc(ui('bypass_cta'))}</button>` : ''}
+    <button class="btn btn-restart" id="restartBtn">${esc(ui('restart'))}</button>`;
+  bindBack();
+  const bp = document.getElementById('bypassBtn');
+  if (bp) bp.onclick = () => navTo('solution:bypass', { question: ui('not_resolved_title'), answer: ui('bypass_cta') });
+  document.getElementById('restartBtn').onclick = restart;
+}
+
+function renderLoadError() {
+  showProgressBar(false);
+  const sv = window.currentLang === 'sv';
+  cardEl().innerHTML = `
+    <h2>${sv ? 'Kunde inte ladda innehållet' : 'Could not load content'}</h2>
+    <p>${sv ? 'Kontrollera din internetanslutning och försök igen.' : 'Please check your connection and try again.'}</p>
+    <button class="btn btn-primary" onclick="location.reload()">${sv ? 'Försök igen' : 'Retry'}</button>`;
 }
 
 // ==========================================
@@ -169,9 +645,7 @@ function initLangSwitcher() {
   const search = document.getElementById('langSearch');
   const list = document.getElementById('langList');
   const label = document.getElementById('currentLangLabel');
-
   if (!btn) return;
-
   label.textContent = window.currentLang.toUpperCase();
 
   function renderList(filter) {
@@ -181,545 +655,47 @@ function initLangSwitcher() {
       .forEach(l => {
         const item = document.createElement('button');
         item.className = 'lang-item' + (l.code === window.currentLang ? ' active' : '');
-        item.textContent = `${l.label}`;
-        item.addEventListener('click', () => {
-          window.currentLang = l.code;
-          localStorage.setItem('cafestation_lang', l.code);
-          label.textContent = l.code.toUpperCase();
-          dropdown.classList.remove('open');
-          steps.start();
-        });
+        item.textContent = l.label;
+        item.addEventListener('click', () => { switchLang(l.code, label, dropdown); });
         list.appendChild(item);
       });
   }
-
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     dropdown.classList.toggle('open');
-    if (dropdown.classList.contains('open')) {
-      search.value = '';
-      renderList('');
-      search.focus();
-    }
+    if (dropdown.classList.contains('open')) { search.value = ''; renderList(''); search.focus(); }
   });
-
   search.addEventListener('input', () => renderList(search.value));
   search.addEventListener('click', (e) => e.stopPropagation());
-
   document.addEventListener('click', () => dropdown.classList.remove('open'));
-
   renderList('');
 }
 
-// ==========================================
-// TROUBLESHOOTING FLOW
-// ==========================================
-const steps = {};
-
-steps.start = function () {
-  stepHistory = ['start'];
-  setProgress(5);
-  const card = document.getElementById('card');
-  card.style.animation = 'none';
-  card.offsetHeight;
-  card.style.animation = 'fadeIn 0.3s ease';
-  card.innerHTML = `
-    <h2>${t('start_title')}</h2>
-    <div class="start-grid">
-      <button class="start-card" id="startDescribe">
-        <div class="start-card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
-            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 113 3L7 19l-4 1 1-4L16.5 3.5z"/>
-          </svg>
-        </div>
-        <span class="start-card-title">${t('start_describe')}</span>
-        <span class="start-card-sub">${t('start_describe_sub')}</span>
-      </button>
-      <button class="start-card" id="startTroubleshoot">
-        <div class="start-card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
-            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-          </svg>
-        </div>
-        <span class="start-card-title">${t('start_troubleshoot')}</span>
-        <span class="start-card-sub">${t('start_troubleshoot_sub')}</span>
-      </button>
-    </div>
-  `;
-  document.getElementById('startDescribe').addEventListener('click', () => {
-    recordStep(t('start_title'), t('start_describe'));
-    steps.describe();
-  });
-  document.getElementById('startTroubleshoot').addEventListener('click', () => {
-    recordStep(t('start_title'), t('start_troubleshoot'));
-    steps.welcome();
-  });
-};
-
-steps.describe = function () {
-  pushHistory('describe');
-  setProgress(10);
-  const card = document.getElementById('card');
-  card.style.animation = 'none';
-  card.offsetHeight;
-  card.style.animation = 'fadeIn 0.3s ease';
-  card.innerHTML = `
-    <h2>${t('describe_title')}</h2>
-    <textarea class="describe-input" id="describeInput" placeholder="${t('describe_placeholder')}" rows="4"></textarea>
-    <p class="describe-hint">${t('describe_hint')}</p>
-    <button class="btn btn-primary" id="describeSubmit">${t('describe_submit')}</button>
-  `;
-  const input = document.getElementById('describeInput');
-  const submit = document.getElementById('describeSubmit');
-  input.focus();
-
-  submit.addEventListener('click', () => {
-    const text = input.value.trim();
-    if (!text) return;
-    recordStep(t('describe_title'), text);
-    submit.textContent = t('describe_analyzing');
-    submit.disabled = true;
-    // Route based on keywords
-    setTimeout(() => routeFromDescription(text), 400);
-  });
-
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      submit.click();
-    }
-  });
-};
-
-function routeFromDescription(text) {
-  const lower = text.toLowerCase();
-  // Water-related
-  if (lower.match(/inget vatten|no water|kein wasser|pas d'eau|no sale agua|vatten kommer inte|water.*not.*com|inte.*vatten/)) {
-    steps.noWater1();
-    return;
-  }
-  // TDS / taste
-  if (lower.match(/tds|smak|taste|geschmack|goût|sabe|mineral|dosering|dosing/)) {
-    steps.tasteBad1();
-    return;
-  }
-  // Lights / blinking / error
-  if (lower.match(/blink|light|lamp|ljus|licht|voyant|luz|error|fel.*box|control.*box|kontrollbox/)) {
-    steps.lights1();
-    return;
-  }
-  // Leak / overflow
-  if (lower.match(/läck|leak|leck|fuit|fuga|overflow|svämma|översvämm|débord|desbord/)) {
-    steps.leak1();
-    return;
-  }
-  // Power / start
-  if (lower.match(/start|ström|power|strom|alimentation|encien|slå på|turn on|einschalt/)) {
-    steps.noPower1();
-    return;
-  }
-  // Default: go to clickable troubleshooting
-  steps.start();
+async function switchLang(code, label, dropdown) {
+  window.currentLang = code;
+  localStorage.setItem('cafestation_lang', code);
+  if (label) label.textContent = code.toUpperCase();
+  if (dropdown) dropdown.classList.remove('open');
+  const next = await loadKB(code);
+  if (next) KB = next;
+  showModePicker();
 }
 
-steps.welcome = function () {
-  pushHistory('welcome');
-  setProgress(15);
-  renderStep({
-    title: t('welcome_title'), text: t('welcome_text'),
-    options: [
-      { label: t('no_water'), action: 'noWater1', type: 'primary' },
-      { label: t('taste_bad'), action: 'tasteBad1', type: 'primary' },
-      { label: t('lights_blink'), action: 'lights1', type: 'primary' },
-      { label: t('leak'), action: 'leak1', type: 'primary' },
-      { label: t('no_start'), action: 'noPower1', type: 'primary' },
-      { label: t('dont_know'), action: 'unknown1', type: 'dont-know' }
-    ]
-  });
-};
-
-// NO WATER
-steps.noWater1 = function () {
-  pushHistory('noWater1');
-  setProgress(30);
-  renderStep({
-    title: t('control_box_on'), text: t('control_box_on_text'),
-    options: [
-      { label: t('yes_lights'), action: 'noWater2_pumpCheck', type: 'primary' },
-      { label: t('no_lights'), action: 'noWater_sol_power', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'noWater_sol_power', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.noWater_sol_power = function () {
-  pushHistory('noWater_sol_power');
-  setProgress(70);
-  renderStep({
-    title: t('check_power_title'), solution: { text: t('check_power_text'), videoId: VIDEOS.powerOn },
-    options: [
-      { label: t('solved'), action: 'resolved', type: 'primary' },
-      { label: t('not_solved'), action: 'notResolved', type: 'secondary' },
-    ]
-  });
-};
-
-steps.noWater2_pumpCheck = function () {
-  pushHistory('noWater2_pumpCheck');
-  setProgress(45);
-  renderStep({
-    title: t('hear_pump'), text: t('hear_pump_text'),
-    options: [
-      { label: t('yes_buzzing'), action: 'noWater3_tankCheck', type: 'primary' },
-      { label: t('no_sound'), action: 'noWater_sol_pump', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'noWater_sol_pump', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.noWater_sol_pump = function () {
-  pushHistory('noWater_sol_pump');
-  setProgress(70);
-  renderStep({
-    title: t('check_pump_title'), solution: { text: t('check_pump_text'), videoId: VIDEOS.boosterPump },
-    options: [
-      { label: t('solved'), action: 'resolved', type: 'primary' },
-      { label: t('not_solved'), action: 'notResolved', type: 'secondary' },
-    ]
-  });
-};
-
-steps.noWater3_tankCheck = function () {
-  pushHistory('noWater3_tankCheck');
-  setProgress(55);
-  renderStep({
-    title: t('tank_water'), text: t('tank_water_text'),
-    options: [
-      { label: t('yes_water'), action: 'noWater_sol_connection', type: 'primary' },
-      { label: t('no_empty'), action: 'noWater_sol_float', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'noWater_sol_float', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.noWater_sol_float = function () {
-  pushHistory('noWater_sol_float');
-  setProgress(70);
-  renderStep({
-    title: t('check_float_title'), solution: { text: t('check_float_text'), videoId: VIDEOS.floatSwitch },
-    options: [
-      { label: t('solved'), action: 'resolved', type: 'primary' },
-      { label: t('not_solved'), action: 'notResolved', type: 'secondary' },
-    ]
-  });
-};
-
-steps.noWater_sol_connection = function () {
-  pushHistory('noWater_sol_connection');
-  setProgress(70);
-  renderStep({
-    title: t('check_connection_title'), solution: { text: t('check_connection_text'), videoId: VIDEOS.boosterMachine },
-    options: [
-      { label: t('solved'), action: 'resolved', type: 'primary' },
-      { label: t('not_solved'), action: 'notResolved', type: 'secondary' },
-    ]
-  });
-};
-
-// TDS
-steps.tasteBad1 = function () {
-  pushHistory('tasteBad1');
-  setProgress(30);
-  renderStep({
-    title: t('measured_tds'), text: t('measured_tds_text'),
-    options: [
-      { label: t('yes_measured'), action: 'tasteBad2_level', type: 'primary' },
-      { label: t('no_measured'), action: 'tasteBad_sol_measure', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'tasteBad_sol_measure', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.tasteBad_sol_measure = function () {
-  pushHistory('tasteBad_sol_measure');
-  setProgress(50);
-  renderStep({
-    title: t('how_measure_title'),
-    solution: { text: t('how_measure_text'), videoId: VIDEOS.changeModes, docUrl: 'docs/TDS-Protocol.pdf' },
-    text: t('after_measure'),
-    options: [
-      { label: t('seems_high'), action: 'tasteBad_sol_high', type: 'primary' },
-      { label: t('seems_low'), action: 'tasteBad_sol_low', type: 'secondary' },
-      { label: t('dont_know_value'), action: 'tasteBad_sol_dontknow', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.tasteBad2_level = function () {
-  pushHistory('tasteBad2_level');
-  setProgress(50);
-  renderStep({
-    title: t('tds_high_low'), text: t('tds_high_low_text'),
-    options: [
-      { label: t('too_high'), action: 'tasteBad_sol_high', type: 'primary' },
-      { label: t('too_low'), action: 'tasteBad_sol_low', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'tasteBad_sol_dontknow', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.tasteBad_sol_high = function () {
-  pushHistory('tasteBad_sol_high');
-  setProgress(70);
-  renderStep({
-    title: t('tds_high_title'), solution: { text: t('tds_high_text'), videoId: VIDEOS.changeModes, docUrl: 'docs/TDS-Protocol.pdf' },
-    options: [
-      { label: t('solved'), action: 'resolved', type: 'primary' },
-      { label: t('not_solved'), action: 'notResolved', type: 'secondary' },
-    ]
-  });
-};
-
-steps.tasteBad_sol_low = function () {
-  pushHistory('tasteBad_sol_low');
-  setProgress(70);
-  renderStep({
-    title: t('tds_low_title'), solution: { text: t('tds_low_text'), videoId: VIDEOS.priming, docUrl: 'docs/TDS-Protocol.pdf' },
-    options: [
-      { label: t('solved'), action: 'resolved', type: 'primary' },
-      { label: t('not_solved'), action: 'notResolved', type: 'secondary' },
-    ]
-  });
-};
-
-steps.tasteBad_sol_dontknow = function () {
-  pushHistory('tasteBad_sol_dontknow');
-  setProgress(70);
-  renderStep({
-    title: t('check_dosing_title'), solution: { text: t('check_dosing_text'), videoId: VIDEOS.controlDosing, docUrl: 'docs/TDS-Protocol.pdf' },
-    options: [
-      { label: t('solved'), action: 'resolved', type: 'primary' },
-      { label: t('not_solved'), action: 'notResolved', type: 'secondary' },
-    ]
-  });
-};
-
-// LIGHTS
-steps.lights1 = function () {
-  pushHistory('lights1');
-  setProgress(30);
-  renderStep({
-    title: t('which_light'), text: t('which_light_text'),
-    options: [
-      { label: t('power_light'), action: 'lights_sol_power', type: 'primary' },
-      { label: t('dosing_light'), action: 'lights_sol_dosing', type: 'primary' },
-      { label: t('float_light'), action: 'lights_sol_float', type: 'primary' },
-      { label: t('dont_know_light'), action: 'lights_sol_general', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.lights_sol_power = function () {
-  pushHistory('lights_sol_power');
-  setProgress(70);
-  renderStep({
-    title: t('power_light_title'), solution: { text: t('power_light_text'), videoId: VIDEOS.powerOn },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-steps.lights_sol_dosing = function () {
-  pushHistory('lights_sol_dosing');
-  setProgress(70);
-  renderStep({
-    title: t('dosing_light_title'), solution: { text: t('dosing_light_text'), videoId: VIDEOS.controlDosing },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-steps.lights_sol_float = function () {
-  pushHistory('lights_sol_float');
-  setProgress(70);
-  renderStep({
-    title: t('float_light_title'), solution: { text: t('float_light_text'), videoId: VIDEOS.floatSwitch },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-steps.lights_sol_general = function () {
-  pushHistory('lights_sol_general');
-  setProgress(70);
-  renderStep({
-    title: t('check_control_title'), solution: { text: t('check_control_text'), videoId: VIDEOS.changeModes },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-// LEAK
-steps.leak1 = function () {
-  pushHistory('leak1');
-  setProgress(30);
-  renderStep({
-    title: t('where_leak'), text: t('where_leak_text'),
-    options: [
-      { label: t('tank_overflow'), action: 'leak_sol_tank', type: 'primary' },
-      { label: t('under_counter'), action: 'leak_sol_under', type: 'primary' },
-      { label: t('at_machine'), action: 'leak_sol_machine', type: 'primary' },
-      { label: t('dont_know_short'), action: 'leak_sol_general', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.leak_sol_tank = function () {
-  pushHistory('leak_sol_tank');
-  setProgress(70);
-  renderStep({
-    title: t('tank_overflow_title'), solution: { text: t('tank_overflow_text'), videoId: VIDEOS.troubleshoot },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-steps.leak_sol_under = function () {
-  pushHistory('leak_sol_under');
-  setProgress(70);
-  renderStep({
-    title: t('leak_under_title'), solution: { text: t('leak_under_text'), videoId: VIDEOS.checkValve },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-steps.leak_sol_machine = function () {
-  pushHistory('leak_sol_machine');
-  setProgress(70);
-  renderStep({
-    title: t('leak_machine_title'), solution: { text: t('leak_machine_text'), videoId: VIDEOS.boosterMachine },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-steps.leak_sol_general = function () {
-  pushHistory('leak_sol_general');
-  setProgress(70);
-  renderStep({
-    title: t('find_leak_title'), solution: { text: t('find_leak_text'), videoId: VIDEOS.full },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-// NO POWER
-steps.noPower1 = function () {
-  pushHistory('noPower1');
-  setProgress(30);
-  renderStep({
-    title: t('cable_plugged'), text: t('cable_plugged_text'),
-    options: [
-      { label: t('yes_plugged'), action: 'noPower_sol_breaker', type: 'primary' },
-      { label: t('no_checking'), action: 'noPower_sol_cable', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'noPower_sol_cable', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.noPower_sol_cable = function () {
-  pushHistory('noPower_sol_cable');
-  setProgress(70);
-  renderStep({
-    title: t('check_cable_title'), solution: { text: t('check_cable_text'), videoId: VIDEOS.powerOn },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-steps.noPower_sol_breaker = function () {
-  pushHistory('noPower_sol_breaker');
-  setProgress(70);
-  renderStep({
-    title: t('check_breaker_title'), solution: { text: t('check_breaker_text'), videoId: VIDEOS.mountControl },
-    options: [ { label: t('solved'), action: 'resolved', type: 'primary' }, { label: t('not_solved'), action: 'notResolved', type: 'secondary' } ]
-  });
-};
-
-// UNKNOWN
-steps.unknown1 = function () {
-  pushHistory('unknown1');
-  setProgress(20);
-  renderStep({
-    title: t('basics_title'), text: t('basics_text'),
-    options: [ { label: t('next'), action: 'unknown2_water', type: 'primary' } ]
-  });
-};
-
-steps.unknown2_water = function () {
-  pushHistory('unknown2_water');
-  setProgress(30);
-  renderStep({
-    title: t('water_coming'),
-    options: [
-      { label: t('yes_water_coming'), action: 'unknown3_lights', type: 'primary' },
-      { label: t('no_water_coming'), action: 'noWater1', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'unknown3_lights', type: 'dont-know' }
-    ]
-  });
-};
-
-steps.unknown3_lights = function () {
-  pushHistory('unknown3_lights');
-  setProgress(40);
-  renderStep({
-    title: t('lights_on'), text: t('lights_on_text'),
-    options: [
-      { label: t('lights_normal'), action: 'tasteBad1', type: 'primary' },
-      { label: t('lights_blinking'), action: 'lights1', type: 'primary' },
-      { label: t('no_lights_at_all'), action: 'noPower1', type: 'secondary' },
-      { label: t('dont_know_short'), action: 'notResolved', type: 'dont-know' }
-    ]
-  });
-};
-
-// RESOLVED / NOT RESOLVED
-steps.resolved = function () {
-  pushHistory('resolved');
-  setProgress(100);
-  endSession(true, false);
-  renderStep({
-    success: { title: t('success_title'), text: t('success_text') },
-    options: [ { label: t('restart'), action: 'restart', type: 'restart' } ]
-  });
-};
-
-steps.notResolved = function () {
-  pushHistory('notResolved');
-  setProgress(100);
-  endSession(false, false);
-  renderStep({
-    title: t('not_resolved_title'), contact: true,
-    options: [ { label: t('restart'), action: 'restart', type: 'restart' } ]
-  });
-};
-
-steps.restart = function () {
-  session = { id: null, startTime: Date.now(), steps: [], product: 'cafe_station' };
-  createSession();
-  steps.start();
-};
-
 // ==========================================
-// START
+// INIT
 // ==========================================
-function init() {
+async function init() {
   initLangSwitcher();
   createSession();
   resetInactivityTimer();
-  steps.start();
+  const c = cardEl();
+  if (c) c.innerHTML = '<p style="text-align:center;color:#999;padding:1rem 0">…</p>';
+  KB = await loadKB(window.currentLang);
+  if (!KB) return renderLoadError();
+  showModePicker();
 
-  // Logo click goes home
   const logo = document.getElementById('logoHome');
-  if (logo) {
-    logo.addEventListener('click', () => {
-      session = { id: null, startTime: Date.now(), steps: [], product: 'cafe_station' };
-      createSession();
-      steps.start();
-    });
-  }
+  if (logo) logo.addEventListener('click', () => showModePicker());
 }
 
 document.addEventListener('DOMContentLoaded', init);
