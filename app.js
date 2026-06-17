@@ -145,8 +145,37 @@ function resetInactivityTimer() {
   inactivityTimer = setTimeout(() => endSession(false, true), INACTIVITY_TIMEOUT);
 }
 function recordStep(question, answer) {
-  session.steps.push({ question, answer, timestamp: new Date().toISOString() });
+  session.steps.push({ question, answer, timestamp: new Date().toISOString(), historySnapshot: [...history], purifierSnapshot: currentPurifier });
   resetInactivityTimer();
+}
+
+function jumpToStep(i) {
+  const step = session.steps[i];
+  if (!step) return;
+  history = [...step.historySnapshot];
+  currentPurifier = step.purifierSnapshot;
+  session.steps = session.steps.slice(0, i);
+  renderTarget(history[history.length - 1]);
+}
+
+function renderTrail() {
+  const el = document.getElementById('trail');
+  if (!el) return;
+  if (!session.steps.length) { el.innerHTML = ''; return; }
+  const isSv = window.currentLang === 'sv';
+  const hint = isSv ? '↩ Ändra val' : '↩ Change choice';
+  const arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 5v14"/><path d="M5 12l7 7 7-7"/></svg>';
+  el.innerHTML = session.steps.map((s, i) => {
+    const isLast = i === session.steps.length - 1;
+    return `<div class="trail-item" data-step="${i}">
+      <span class="trail-q">${esc(s.question)}</span>
+      <span class="trail-a">${esc(s.answer)}</span>
+      <span class="trail-hint">${hint}</span>
+    </div>${!isLast ? `<div class="trail-arrow">${arrowSvg}</div>` : ''}`;
+  }).join('');
+  el.querySelectorAll('.trail-item').forEach(item => {
+    item.onclick = () => jumpToStep(+item.dataset.step);
+  });
 }
 async function createSession() {
   if (!db) return;
@@ -238,6 +267,7 @@ function goBack() {
   }
 }
 function renderTarget(target) {
+  renderTrail();
   if (target === 'mode') return renderModePicker();
   if (target === 'install') return renderInstallationPicker();
   if (target === 'install:cafe_station') return renderInstallationVideo();
@@ -252,7 +282,7 @@ function renderTarget(target) {
   return renderNotResolved();
 }
 
-function showModePicker() { currentPurifier = null; history = ['mode']; renderModePicker(); }
+function showModePicker() { currentPurifier = null; history = ['mode']; renderTrail(); renderModePicker(); }
 function showProductPicker() { currentPurifier = null; history = ['mode', 'product']; renderProductPicker(); }
 function showStart() { history = ['mode', 'product']; navTo('start'); }
 function restart() {
@@ -360,7 +390,7 @@ function renderInstallationVideo() {
     ${chaptersHtml}
     <button class="btn btn-restart" id="installDoneBtn">${sv ? 'Tillbaka till start' : 'Back to start'}</button>`;
   bindBack();
-  document.getElementById('installDoneBtn').onclick = showModePicker;
+  document.getElementById('installDoneBtn').onclick = restart;
 }
 
 function renderProductPicker() {
@@ -405,13 +435,11 @@ function renderPurifierPicker() {
     <div class="options">
       <button class="btn btn-primary" id="purSpirit">${esc(L.purifier_spirit)}</button>
       <button class="btn btn-secondary" id="purOther">${esc(L.purifier_other)}</button>
-      <button class="btn btn-dont-know" id="purUnknown">${esc(L.purifier_unknown)}</button>
     </div>`;
   bindBack();
   const pick = (purifier, label) => { currentPurifier = purifier; recordStep(L.purifier_h, label); navTo('start'); };
   document.getElementById('purSpirit').onclick = () => pick('spirit', L.purifier_spirit);
   document.getElementById('purOther').onclick = () => pick('other', L.purifier_other);
-  document.getElementById('purUnknown').onclick = () => pick('spirit', L.purifier_unknown);
 }
 
 function renderStartScreen() {
@@ -598,14 +626,45 @@ function renderNotResolved() {
   endSession(false, false);
   animateCard();
   const e = (KB && KB.escalation) || {};
+  const isSv = window.currentLang === 'sv';
   const phone = e.phone ? `<p><a href="tel:${esc(e.phone_tel || '')}">${esc(e.phone)}</a></p>` : '';
   const hasBypass = KB && KB.solutions && KB.solutions.bypass;
   const mailSubject = ui('mail_subject_value') || e.subject_hint || '';
-  const mailBody = ui('mail_body_value') || e.attach_hint || '';
+
+  // Build email body with steps + instructional comment
+  const stepsText = session.steps.map((s, i) => `${i + 1}. ${s.question} → ${s.answer}`).join('\n');
+  const attachLines = Array.isArray(e.attachments) ? e.attachments.map(a => `• ${a}`).join('\n') : (ui('contact_attach_hint') || '');
+  const comment = isSv
+    ? '// Det verkar som att du har problem med nedanstående funktioner.\n// Om det stämmer, lägg till kontext eller detaljer och skicka mailet.\n// Om det inte stämmer, ta bort det och skriv din egen beskrivning.'
+    : '// It seems like you have issues with the below related functions.\n// If yes, add context or specifics and send the mail.\n// If it doesn\'t match your issue, delete it and write your own description.';
+  const diagLabel = isSv ? 'Diagnostikväg' : 'Diagnostic path';
+  const attachLabel = isSv ? 'Bifoga' : 'Please attach';
+  const mailBody = [
+    comment,
+    '',
+    stepsText ? `${diagLabel}:\n${stepsText}` : '',
+    '',
+    attachLines ? `${attachLabel}:\n${attachLines}` : ''
+  ].join('\n').replace(/\n{3,}/g, '\n\n').trim();
+
   const mailHref = `mailto:${e.email || ''}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+
+  // Diagnostic path shown on page
+  const diagPathHtml = session.steps.length ? `
+    <div class="diag-path">
+      <div class="diag-path-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>${isSv ? 'Din diagnostikväg' : 'Your diagnostic path'}</span>
+      </div>
+      <ol class="diag-path-list">
+        ${session.steps.map(s => `<li><span class="diag-q">${esc(s.question)}</span><span class="diag-a">${esc(s.answer)}</span></li>`).join('')}
+      </ol>
+    </div>` : '';
+
   cardEl().innerHTML = `
     ${backBtnHtml()}
     <h2>${esc(ui('not_resolved_title'))}</h2>
+    ${diagPathHtml}
     ${e.about_page_hint ? aboutPageHtml() : ''}
     <div class="contact-box">
       <h3>${esc(ui('contact_support'))}</h3>
@@ -695,7 +754,7 @@ async function init() {
   showModePicker();
 
   const logo = document.getElementById('logoHome');
-  if (logo) logo.addEventListener('click', () => showModePicker());
+  if (logo) logo.addEventListener('click', () => restart());
 }
 
 document.addEventListener('DOMContentLoaded', init);
