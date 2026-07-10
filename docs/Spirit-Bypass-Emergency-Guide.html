@@ -143,9 +143,63 @@
   }
   .step-detail strong { color: var(--bw-navy); }
 
+  /* Flow diagram */
+  .diagram {
+    margin-top: auto;
+    padding-top: 6mm;
+  }
+  .diagram-title {
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bw-blue);
+    margin-bottom: 3mm;
+  }
+  .flow {
+    display: flex;
+    align-items: center;
+    background: var(--bw-bg);
+    border-radius: 8px;
+    padding: 5mm 4mm;
+  }
+  .flow-box {
+    flex: 1 1 0;
+    background: #eef1fe;
+    border: 2px solid var(--bw-blue);
+    border-radius: 6px;
+    padding: 2.5mm 1.5mm;
+    text-align: center;
+  }
+  .flow-box .fb-title {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: var(--bw-navy);
+    line-height: 1.25;
+  }
+  .flow-box .fb-sub {
+    font-size: 6.5pt;
+    font-weight: 600;
+    color: #444;
+    margin-top: 1mm;
+    line-height: 1.3;
+  }
+  .flow-link {
+    flex: 0 0 5mm;
+    height: 2px;
+    background: var(--bw-blue);
+  }
+  .diagram-note {
+    margin-top: 2.5mm;
+    font-size: 8pt;
+    color: #666;
+    line-height: 1.4;
+  }
+  .diagram-note strong { color: var(--bw-copper); }
+
   /* Footer */
   .footer {
-    margin-top: auto;
+    margin-top: 6mm;
     padding-top: 4mm;
     border-top: 1px solid var(--bw-border);
     display: flex;
@@ -212,6 +266,37 @@
         </div>
       </li>
     </ol>
+
+    <section class="diagram">
+      <div class="diagram-title">Water flow — system overview</div>
+      <div class="flow">
+        <div class="flow-box">
+          <div class="fb-title">Mains Water</div>
+          <div class="fb-sub">Municipal supply</div>
+        </div>
+        <div class="flow-link"></div>
+        <div class="flow-box">
+          <div class="fb-title">RO Tank (12L)</div>
+          <div class="fb-sub">10.0L stored / 8.5L usable</div>
+        </div>
+        <div class="flow-link"></div>
+        <div class="flow-box">
+          <div class="fb-title">Seaflo Pump</div>
+          <div class="fb-sub">1.89&ndash;5.6 l/min | 2.8&ndash;4.8 bar</div>
+        </div>
+        <div class="flow-link"></div>
+        <div class="flow-box">
+          <div class="fb-title">Pre Filters</div>
+          <div class="fb-sub">Sediment + Carbon</div>
+        </div>
+        <div class="flow-link"></div>
+        <div class="flow-box">
+          <div class="fb-title">Cafe Station</div>
+          <div class="fb-sub">10L mineral tank, refills from 2L</div>
+        </div>
+      </div>
+      <p class="diagram-note"><strong>Bypass:</strong> the Spirit sits between the Pre Filters and the Cafe Station&rsquo;s control boxes &mdash; steps 2&ndash;4 route the water from the Pre Filters directly into the Y-connector, skipping the Spirit.</p>
+    </section>
 
     <footer class="footer">
       <span class="f-brand">BLUEWATER</span>
