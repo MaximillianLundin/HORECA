@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bluewater Spirit — Emergency Bypass Guide</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bw-blue: #0A2FB6;
+    --bw-navy: #1B2A4A;
+    --bw-copper: #8B5E3C;
+    --bw-text: #1d1d1f;
+    --bw-border: #e0e0e0;
+    --bw-bg: #f5f5f7;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--bw-text);
+    background: #fff;
+    width: 210mm;
+    min-height: 297mm;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    padding: 16mm 18mm 14mm;
+    display: flex;
+    flex-direction: column;
+    min-height: 297mm;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 3px solid var(--bw-blue);
+    padding-bottom: 5mm;
+    margin-bottom: 7mm;
+  }
+  .brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .brand-name {
+    font-size: 15pt;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: var(--bw-blue);
+    text-transform: uppercase;
+  }
+  .doc-type {
+    font-size: 8.5pt;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bw-copper);
+  }
+  h1 {
+    margin-top: 6mm;
+    font-size: 21pt;
+    font-weight: 700;
+    color: var(--bw-navy);
+    line-height: 1.2;
+  }
+  .subtitle {
+    margin-top: 2mm;
+    font-size: 10.5pt;
+    color: #555;
+  }
+
+  /* Warning / prep box */
+  .prep {
+    display: flex;
+    gap: 4mm;
+    align-items: flex-start;
+    background: #fff8f0;
+    border: 1px solid #eeddcc;
+    border-left: 4px solid var(--bw-copper);
+    border-radius: 8px;
+    padding: 4mm 5mm;
+    margin-bottom: 7mm;
+  }
+  .prep-icon {
+    flex: 0 0 auto;
+    width: 8mm;
+    height: 8mm;
+    border-radius: 50%;
+    background: var(--bw-copper);
+    color: #fff;
+    font-weight: 800;
+    font-size: 12pt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .prep-title {
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bw-copper);
+    margin-bottom: 1mm;
+  }
+  .prep p { font-size: 10.5pt; line-height: 1.45; }
+
+  /* Steps */
+  .steps { list-style: none; }
+  .step {
+    display: flex;
+    gap: 5mm;
+    padding: 4.5mm 0;
+    border-bottom: 1px solid var(--bw-border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    flex: 0 0 auto;
+    width: 10mm;
+    height: 10mm;
+    border-radius: 50%;
+    background: var(--bw-blue);
+    color: #fff;
+    font-size: 13pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-body { padding-top: 0.5mm; }
+  .step-title {
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--bw-navy);
+    line-height: 1.3;
+  }
+  .step-detail {
+    margin-top: 1.5mm;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    color: #444;
+  }
+  .step-detail strong { color: var(--bw-navy); }
+
+  /* Footer */
+  .footer {
+    margin-top: auto;
+    padding-top: 4mm;
+    border-top: 1px solid var(--bw-border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    color: #888;
+  }
+  .footer .f-brand { color: var(--bw-blue); font-weight: 700; letter-spacing: 0.1em; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-name">Bluewater</div>
+        <div class="doc-type">Service Instruction</div>
+      </div>
+      <h1>How to bypass the Spirit in emergency situations</h1>
+      <p class="subtitle">Temporary bypass routing feed water from the prefilters directly to the control boxes.</p>
+    </header>
+
+    <div class="prep">
+      <div class="prep-icon">!</div>
+      <div>
+        <div class="prep-title">Before you start</div>
+        <p>Have a dry rag at hand for wiping up water — some water will escape when tubes are disconnected.</p>
+      </div>
+    </div>
+
+    <ol class="steps">
+      <li class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Shut off mains, turn off the booster pump &amp; disconnect the Spirit</div>
+          <div class="step-detail">Close the <strong>feed valve</strong> right where the mains are connected.</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Disconnect the 3/8&Prime; tube at the Spirit inlet</div>
+          <div class="step-detail">This is the tube going from the <strong>prefilters</strong> to the <strong>Spirit</strong>.</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Disconnect the tube going into the Y-connector</div>
+          <div class="step-detail">The <strong>Y-connector</strong> is the one that leads to the <strong>control boxes</strong>.</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Connect the prefilter tubing directly into the Y-connector</div>
+          <div class="step-detail">The tubing from the prefilters now feeds the <strong>Y-connector that supplies the control boxes</strong>, bypassing the Spirit.</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Turn on the booster pump and mains</div>
+          <div class="step-detail">Open the feed valve, switch the booster pump back on and check all connections for leaks.</div>
+        </div>
+      </li>
+    </ol>
+
+    <footer class="footer">
+      <span class="f-brand">BLUEWATER</span>
+      <span>Spirit — Emergency Bypass Guide</span>
+      <span>For emergency use only</span>
+    </footer>
+  </div>
+</body>
+</html>
