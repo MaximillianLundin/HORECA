@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "content_version": "2026-05-29-1",
+  "content_version": "2026-09-03-1",
   "product": {
     "slug": "cafe_station_1",
     "name": "Café Station 1™",
@@ -14,7 +14,7 @@
       "title": "Inget vatten kommer ut",
       "icon": "droplet-off",
       "sort_order": 1,
-      "start_step": "nw_tank",
+      "start_step": "noWater1",
       "routing_keywords": [
         "inget vatten",
         "no water",
@@ -111,6 +111,52 @@
         "no lights",
         "inga lampor"
       ]
+    },
+    {
+      "slug": "dosing_not_connected",
+      "title": "Mineraldoseringen fungerar inte",
+      "icon": "unplug",
+      "sort_order": 6,
+      "start_step": "dosing_connect",
+      "routing_keywords": [
+        "not connected",
+        "inte ansluten",
+        "dosing pump",
+        "doseringspump",
+        "pair",
+        "parkoppla",
+        "mineral level",
+        "mineralnivå",
+        "disconnected",
+        "frånkopplad",
+        "mineral water supply",
+        "nivå noll",
+        "level zero",
+        "unpaired"
+      ]
+    },
+    {
+      "slug": "slow_flow",
+      "title": "Vattnet kommer långsamt",
+      "icon": "timer",
+      "sort_order": 7,
+      "start_step": "slow_flow",
+      "routing_keywords": [
+        "slow",
+        "långsam",
+        "delay",
+        "fördröjning",
+        "tar lång tid",
+        "dröjer",
+        "trickle",
+        "pour over",
+        "pour-over",
+        "faucet",
+        "kranen",
+        "tap",
+        "seconds to start",
+        "sekunder"
+      ]
     }
   ],
   "diagnostic_steps": {
@@ -122,12 +168,22 @@
       "options": [
         {
           "label": "Inget vatten kommer ut",
-          "next": "step:nw_tank",
+          "next": "step:noWater1",
           "type": "primary"
         },
         {
           "label": "Kaffet smakar fel",
           "next": "step:tasteBad1",
+          "type": "primary"
+        },
+        {
+          "label": "Mineraldoseringen fungerar inte",
+          "next": "step:dosing_connect",
+          "type": "primary"
+        },
+        {
+          "label": "Vattnet kommer långsamt",
+          "next": "step:slow_flow",
           "type": "primary"
         },
         {
@@ -574,6 +630,59 @@
         {
           "label": "Vet ej",
           "next": "end:notResolved",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "dosing_connect": {
+      "question": "Vad visar Bluewater Serve-appen för doseringspumpen?",
+      "help_text": "Öppna Bluewater Serve-appen och titta på doseringspumpen för den här kontrollboxen. Om anläggningen har fler än en kontrollbox, kontrollera en i taget.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Doseringspumpen visas som inte ansluten",
+          "next": "solution:pair_control_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "Den är ansluten, men jag kan bara välja mineralnivå noll",
+          "next": "solution:dosing_app_restart",
+          "type": "primary"
+        },
+        {
+          "label": "Pumpen lyser inte alls",
+          "next": "solution:lights_sol_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "solution:pair_control_dosing",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "slow_flow": {
+      "question": "Var kommer vattnet långsamt?",
+      "help_text": "En lång fördröjning innan vattnet börjar rinna beror oftast på ledningen mellan lagringstanken och tappstället, inte på reningen.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Vid vattenkranen",
+          "next": "solution:slow_flow_valve",
+          "type": "primary"
+        },
+        {
+          "label": "Vid espressomaskinen",
+          "next": "step:nw_tank",
+          "type": "primary"
+        },
+        {
+          "label": "Vet ej",
+          "next": "solution:slow_flow_valve",
           "type": "dont_know"
         }
       ]
@@ -1845,7 +1954,7 @@
         "solved_label": "Det löste problemet!",
         "solved_next": "end:resolved",
         "not_solved_label": "Fungerar fortfarande inte",
-        "not_solved_next": "end:notResolved"
+        "not_solved_next": "solution:factory_reset"
       }
     },
     "tasteBad_sol_measure": {
@@ -2839,6 +2948,292 @@
       "photo_gallery": [],
       "mid_step_help": null,
       "follow_up": null
+    },
+    "check_power_source": {
+      "title": "Kontrollera strömkällan",
+      "intro": "Kontrollera strömmen vid källan för att säkerställa att systemet har ström. Om strömkabeln är ansluten ska den övre lampan på kontrollboxen lysa grönt. Om den inte är grön kan uttaget vara trasigt — prova ett annat.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "pair_control_dosing": {
+      "title": "Parkoppla kontrollboxen med doseringspumpen",
+      "intro": "Parkoppla doseringspumpen med kontrollboxen och testa igen. Varje kontrollbox måste parkopplas med sin egen doseringspump.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Håll in den nedre knappen på kontrollboxen tills den stora blå lampan ovanpå doseringspumpen börjar blinka och knappen du tryckte på också blinkar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Tryck en gång på lampan på doseringspumpens ovansida för att parkoppla.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Testa: kör espressomaskinen i ungefär en minut för att tvinga fram en liten påfyllning av den trycklösa tanken, och kontrollera att den blå lampan på pumpen snurrar under påfyllningen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Om anläggningen har fler än en kontrollbox, upprepa steg 1–3 för varje kontrollbox med dess egen doseringspump. En pump kan bara vara parkopplad med en kontrollbox.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Stäng Bluewater Serve-appen helt och öppna den igen. Innan du gör det går det inte att välja mineralnivåer över noll.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Mineralnivåer över noll förblir låsta i appen tills den har stängts helt och öppnats igen efter parkopplingen.",
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:tasteBad_sol_dosing_reconnect"
+      }
+    },
+    "dosing_app_restart": {
+      "title": "Starta om appen för att låsa upp mineralnivåerna",
+      "intro": "Efter parkopplingen visar appen ofta nivå noll tills den har startats om helt.",
+      "estimated_time_minutes": 5,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": "quick",
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Stäng Bluewater Serve-appen helt — inte bara till bakgrunden. På iPhone: svep bort den i appväxlaren. På Android: stäng den i listan över senaste appar.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Öppna appen igen och anslut till kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Välj den mineralnivå du vill ha. Nivåer över noll ska nu gå att välja.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Om anläggningen har två kontrollboxer, kontrollera att varje box är parkopplad med sin egen doseringspump innan du ställer in nivåer.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Om nivån fortfarande inte går att ställa över noll är pumpen troligen inte parkopplad — gå tillbaka och parkoppla den.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:pair_control_dosing"
+      }
+    },
+    "slow_flow_valve": {
+      "title": "Kontrollera ventilen och ledningen till kranen",
+      "intro": "Gå igenom punkterna i ordning. En delvis stängd ventil är den absolut vanligaste orsaken till 30–40 sekunders fördröjning.",
+      "estimated_time_minutes": 10,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": "quick",
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera ventilen mellan trycktanken och kranen. Den måste vara helt öppen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Titta på framsidan av Bluewater Spirit. ON-lampan ska lysa med fast grönt sken. Om den blinkar, använd felsökningen för Spirit i stället.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Följ ledningen från Spirit till lagringstanken. Kontrollera att kopplingen sitter ordentligt och att slangen inte är böjd eller klämd.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Följ ledningen från lagringstanken till kranen och kontrollera samma sak där.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Kontrollera vattennivån i lagringstanken. Om den är låg eller tom fylls tanken inte på tillräckligt snabbt — fördröjningen är då ett påfyllningsproblem och inte ett kranproblem.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "solution:slow_flow_escalate"
+      }
+    },
+    "slow_flow_escalate": {
+      "title": "Filma systemet och skicka till supporten",
+      "intro": "Om fördröjningen finns kvar behöver supporten se systemet medan det händer.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Börja filma, öppna sedan kranen och fortsätt filma medan du går igenom systemet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Filma framsidan av Bluewater Spirit.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Filma kopplingen från Spirit till lagringstanken.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Filma kopplingen från lagringstanken till kranen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Skicka videon till supporten och ange hur många sekunders fördröjning det rör sig om och om tankventilen var öppen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "En sammanhängande video i den ordningen är betydligt mer användbar än flera separata klipp.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
     }
   },
   "escalation": {

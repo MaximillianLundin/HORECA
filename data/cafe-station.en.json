@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "content_version": "2026-05-29-1",
+  "content_version": "2026-09-03-1",
   "product": {
     "slug": "cafe_station_1",
     "name": "Café Station 1™",
@@ -14,7 +14,7 @@
       "title": "No water coming out",
       "icon": "droplet-off",
       "sort_order": 1,
-      "start_step": "nw_tank",
+      "start_step": "noWater1",
       "routing_keywords": [
         "inget vatten",
         "no water",
@@ -111,6 +111,52 @@
         "no lights",
         "inga lampor"
       ]
+    },
+    {
+      "slug": "dosing_not_connected",
+      "title": "Mineral dosing is not working",
+      "icon": "unplug",
+      "sort_order": 6,
+      "start_step": "dosing_connect",
+      "routing_keywords": [
+        "not connected",
+        "inte ansluten",
+        "dosing pump",
+        "doseringspump",
+        "pair",
+        "parkoppla",
+        "mineral level",
+        "mineralnivå",
+        "disconnected",
+        "frånkopplad",
+        "mineral water supply",
+        "nivå noll",
+        "level zero",
+        "unpaired"
+      ]
+    },
+    {
+      "slug": "slow_flow",
+      "title": "Water is slow to arrive",
+      "icon": "timer",
+      "sort_order": 7,
+      "start_step": "slow_flow",
+      "routing_keywords": [
+        "slow",
+        "långsam",
+        "delay",
+        "fördröjning",
+        "tar lång tid",
+        "dröjer",
+        "trickle",
+        "pour over",
+        "pour-over",
+        "faucet",
+        "kranen",
+        "tap",
+        "seconds to start",
+        "sekunder"
+      ]
     }
   ],
   "diagnostic_steps": {
@@ -122,12 +168,22 @@
       "options": [
         {
           "label": "No water coming out",
-          "next": "step:nw_tank",
+          "next": "step:noWater1",
           "type": "primary"
         },
         {
           "label": "Coffee is tasting off",
           "next": "step:tasteBad1",
+          "type": "primary"
+        },
+        {
+          "label": "Mineral dosing is not working",
+          "next": "step:dosing_connect",
+          "type": "primary"
+        },
+        {
+          "label": "Water is slow to arrive",
+          "next": "step:slow_flow",
           "type": "primary"
         },
         {
@@ -579,6 +635,59 @@
         {
           "label": "Don't know",
           "next": "end:notResolved",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "dosing_connect": {
+      "question": "What does the Bluewater Serve app show for the dosing pump?",
+      "help_text": "Open the Bluewater Serve app and look at the dosing pump for this control box. If the site has more than one control box, check them one at a time.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "The dosing pump shows as not connected",
+          "next": "solution:pair_control_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "It is connected, but I can only select mineral level zero",
+          "next": "solution:dosing_app_restart",
+          "type": "primary"
+        },
+        {
+          "label": "The pump has no light at all",
+          "next": "solution:lights_sol_dosing",
+          "type": "primary"
+        },
+        {
+          "label": "Don't know",
+          "next": "solution:pair_control_dosing",
+          "type": "dont_know"
+        }
+      ]
+    },
+    "slow_flow": {
+      "question": "Where does the water come out slowly?",
+      "help_text": "A long delay before water starts flowing usually points to the line between the storage tank and the outlet, not to the purifier itself.",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "At the water tap / faucet",
+          "next": "solution:slow_flow_valve",
+          "type": "primary"
+        },
+        {
+          "label": "At the espresso machine",
+          "next": "step:nw_tank",
+          "type": "primary"
+        },
+        {
+          "label": "Don't know",
+          "next": "solution:slow_flow_valve",
           "type": "dont_know"
         }
       ]
@@ -1908,7 +2017,7 @@
         "solved_label": "That solved it!",
         "solved_next": "end:resolved",
         "not_solved_label": "Still not working",
-        "not_solved_next": "end:notResolved"
+        "not_solved_next": "solution:factory_reset"
       }
     },
     "tasteBad_sol_measure": {
@@ -3030,7 +3139,7 @@
     },
     "pair_control_dosing": {
       "title": "Pair the control box to the dosing pump",
-      "intro": "Pair the dosing pump to the control box, then retest.",
+      "intro": "Pair the dosing pump to the control box, then retest. Each control box must be paired with its own dosing pump.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -3063,6 +3172,151 @@
           "gif": null,
           "audio": null,
           "badge": null
+        },
+        {
+          "number": 4,
+          "text": "If the site has more than one control box, repeat steps 1–3 for each control box with its own dosing pump. A pump can only be paired to one control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Close the Bluewater Serve app completely and reopen it. Until you do, mineral levels above zero cannot be selected.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Mineral levels above zero stay locked in the app until it has been fully closed and reopened after pairing.",
+      "videos": [
+        {
+          "vimeo_id": "1162167800",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:tasteBad_sol_dosing_reconnect"
+      }
+    },
+    "dosing_app_restart": {
+      "title": "Restart the app to unlock mineral levels",
+      "intro": "After pairing, the app often keeps showing level zero until it has been fully restarted.",
+      "estimated_time_minutes": 5,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": "quick",
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Close the Bluewater Serve app completely — not just to the background. On iPhone swipe it away in the app switcher; on Android close it in the recent apps list.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Open the app again and connect to the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Select the mineral level you want. Levels above zero should now be selectable.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "If the site has two control boxes, check that each one is paired with its own dosing pump before setting levels.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "If the level still cannot be set above zero, the pump is most likely not paired — go back and pair it.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "solution:pair_control_dosing"
+      }
+    },
+    "slow_flow_valve": {
+      "title": "Check the valve and the line to the tap",
+      "intro": "Work through these in order. A partly closed valve is by far the most common cause of a 30–40 second delay.",
+      "estimated_time_minutes": 10,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": "quick",
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check the valve between the pressure tank and the faucet. It must be fully open.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Look at the front of the Bluewater Spirit. The ON light should be steady green. If it is blinking, use the Spirit troubleshooting instead.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Follow the line from the Spirit to the storage tank. Check that the connection is secure and the hose is not kinked or pinched.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Follow the line from the storage tank to the faucet and check the same there.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Check the water level in the storage tank. If it is low or empty, the tank is not refilling fast enough — the delay is a refill problem, not a tap problem.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
         }
       ],
       "note": null,
@@ -3075,7 +3329,73 @@
         "solved_label": "That solved it!",
         "solved_next": "end:resolved",
         "not_solved_label": "Still not working",
-        "not_solved_next": "solution:factory_reset"
+        "not_solved_next": "solution:slow_flow_escalate"
+      }
+    },
+    "slow_flow_escalate": {
+      "title": "Film the system and send it to support",
+      "intro": "If the delay is still there, support needs to see the system while it happens.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Start filming, then open the faucet and keep filming while you walk the system.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Film the front of the Bluewater Spirit.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Film the connection from the Spirit to the storage tank.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Film the connection from the storage tank to the faucet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 5,
+          "text": "Send the video to support and say how many seconds the delay is and whether the tank valve was open.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "One continuous video in that order is far more useful than several separate clips.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "options": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
       }
     }
   },
