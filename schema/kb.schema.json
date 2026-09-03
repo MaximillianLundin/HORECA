@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluewater/support/kb.schema.json",
+  "title": "Bluewater Support Knowledge Base",
+  "type": "object",
+  "required": ["schema_version", "product", "issues", "diagnostic_steps", "solutions"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "content_version": { "type": "string" },
+    "product": {
+      "type": "object",
+      "required": ["slug", "name", "language"],
+      "properties": {
+        "slug": { "type": "string" },
+        "name": { "type": "string" },
+        "language": { "type": "string" },
+        "support_email": { "type": ["string", "null"] },
+        "video_showcase": { "type": ["string", "null"] }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "title", "start_step"],
+        "properties": {
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "icon": { "type": ["string", "null"] },
+          "sort_order": { "type": ["number", "null"] },
+          "start_step": { "type": "string" },
+          "routing_keywords": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "diagnostic_steps": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["question", "options"],
+        "properties": {
+          "question": { "type": "string" },
+          "help_text": { "type": ["string", "null"] },
+          "image": { "type": ["string", "null"] },
+          "image_alt": { "type": ["string", "null"] },
+          "safety_warning": { "type": ["string", "null"] },
+          "options": { "$ref": "#/$defs/options" }
+        }
+      }
+    },
+    "solutions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" },
+          "intro": { "type": ["string", "null"] },
+          "steps": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": ["string", "null"] },
+          "after_text": { "type": ["string", "null"] },
+          "mid_step_help": { "type": ["string", "null"] },
+          "safety_warning": { "type": ["string", "null"] },
+          "severity": { "type": ["string", "null"] },
+          "fix_type": { "type": ["string", "null"] },
+          "estimated_time_minutes": { "type": ["number", "null"] },
+          "tools_needed": { "type": "array", "items": { "type": "string" } },
+          "bypass": { "type": "boolean" },
+          "about_page_required": { "type": "boolean" },
+          "_placeholder": { "type": "boolean" },
+          "videos": { "$ref": "#/$defs/media" },
+          "documents": { "$ref": "#/$defs/media" },
+          "photo_gallery": { "$ref": "#/$defs/media" },
+          "options": { "$ref": "#/$defs/options" },
+          "follow_up": {
+            "type": "object",
+            "properties": {
+              "solved_label": { "type": "string" },
+              "solved_next": { "type": "string" },
+              "not_solved_label": { "type": "string" },
+              "not_solved_next": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "escalation": { "type": "object" },
+    "ui_strings": { "type": "object" }
+  },
+  "$defs": {
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "next"],
+        "properties": {
+          "label": { "type": "string" },
+          "next": {
+            "type": "string",
+            "pattern": "^(step:.+|solution:.+|end:(resolved|notResolved)|mode|product|install|purifier|start|describe)$"
+          },
+          "type": { "enum": ["primary", "secondary", "dont_know"] }
+        }
+      }
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "label": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
