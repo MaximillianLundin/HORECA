@@ -105,6 +105,7 @@ function pickerStrings() {
       mode_h: 'Hur kan vi hjälpa dig?', mode_sub: 'Välj ett alternativ för att fortsätta',
       mode_install: 'Installation', mode_install_sub: 'Se installationsvideor',
       mode_support: 'Support', mode_support_sub: 'Felsök ditt system',
+      mode_maintenance: 'Underhållsguide', mode_maintenance_sub: 'Dagliga och veckovisa kontroller',
       // product picker (support)
       h: 'Vilken produkt behöver du hjälp med?', sub: 'Välj produkt för att fortsätta',
       cafe: 'Tryck för att börja', spirit: 'Tryck för att börja',
@@ -121,6 +122,7 @@ function pickerStrings() {
       mode_h: 'What can we help you with?', mode_sub: 'Choose an option to continue',
       mode_install: 'Installation', mode_install_sub: 'Watch installation videos',
       mode_support: 'Support', mode_support_sub: 'Troubleshoot your system',
+      mode_maintenance: 'Maintenance Guide', mode_maintenance_sub: 'Daily and weekly checks',
       // product picker (support)
       h: 'Which product do you need help with?', sub: 'Choose a product to continue',
       cafe: 'Tap to start', spirit: 'Tap to start',
@@ -261,6 +263,7 @@ function navTo(target, record) {
 function goBack() {
   if (history.length > 1) {
     history.pop();
+    session.steps = session.steps.filter(s => s.historySnapshot.length < history.length);
     renderTarget(history[history.length - 1]);
   } else {
     showProductPicker();
@@ -269,6 +272,7 @@ function goBack() {
 function renderTarget(target) {
   renderTrail();
   if (target === 'mode') return renderModePicker();
+  if (target === 'maintenance') return renderMaintenance();
   if (target === 'install') return renderInstallationPicker();
   if (target === 'install:cafe_station') return renderInstallationVideo();
   if (target === 'product') return renderProductPicker();
@@ -276,7 +280,11 @@ function renderTarget(target) {
   if (target === 'start') return renderStartScreen();
   if (target === 'describe') return renderDescribe();
   const [kind, id] = target.split(':');
-  if (kind === 'step') return renderQuestion(id);
+  if (kind === 'step') {
+    const node = KB.diagnostic_steps[id];
+    if (node && node.type === 'checklist') return renderChecklist(id);
+    return renderQuestion(id);
+  }
   if (kind === 'solution') return renderSolution(id);
   if (kind === 'end') return id === 'resolved' ? renderResolved() : renderNotResolved();
   return renderNotResolved();
@@ -303,19 +311,93 @@ function renderModePicker() {
     <h2 class="picker-h">${esc(L.mode_h)}</h2>
     <p class="picker-sub">${esc(L.mode_sub)}</p>
     <div class="prod-grid">
-      <button class="prod" id="modeInstall">
-        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
-        <span class="prod-name">${esc(L.mode_install)}</span>
-        <span class="prod-tag">${esc(L.mode_install_sub)}</span>
-      </button>
       <button class="prod" id="modeSupport">
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-        <span class="prod-name">${esc(L.mode_support)}</span>
-        <span class="prod-tag">${esc(L.mode_support_sub)}</span>
+        <div class="prod-text"><span class="prod-name">${esc(L.mode_support)}</span><span class="prod-tag">${esc(L.mode_support_sub)}</span></div>
+      </button>
+      <button class="prod" id="modeMaintenance">
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+        <div class="prod-text"><span class="prod-name">${esc(L.mode_maintenance)}</span><span class="prod-tag">${esc(L.mode_maintenance_sub)}</span></div>
+      </button>
+      <button class="prod" id="modeInstall">
+        <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <div class="prod-text"><span class="prod-name">${esc(L.mode_install)}</span><span class="prod-tag">${esc(L.mode_install_sub)}</span></div>
       </button>
     </div>`;
   document.getElementById('modeInstall').onclick = () => navTo('install');
   document.getElementById('modeSupport').onclick = () => navTo('product');
+  document.getElementById('modeMaintenance').onclick = () => navTo('maintenance');
+}
+
+function renderMaintenance() {
+  showProgressBar(false);
+  setProgress(0);
+  animateCard();
+  const sv = window.currentLang === 'sv';
+  const title = sv ? 'Underhållsguide' : 'Maintenance Guide';
+  const intro = sv
+    ? 'Bluewater rekommenderar följande rutinkontroller för att minimera risken för driftstopp.'
+    : 'Bluewater recommends the following routine checks to minimise the risk of downtime.';
+  const dailyTitle = sv ? 'Dagligen' : 'Daily';
+  const standstillTitle = sv ? 'Efter 3 dagars stillestånd' : 'After 3 days of standstill';
+  const replTitle = sv ? 'Påfyllning av Coffee Rock' : 'Coffee Rock Replenishment';
+  const dailyItems = sv ? [
+    'Kontrollera lamporna på reningen och mineraliseraren.',
+    'Grön lampa på reningen → OK. Annan färg → se manualen.',
+    'Blå lampa på pumpenheten → OK. Annan färg → se manualen.',
+    'Kontrollera Coffee Rock-nivån — byt flaska när vätskan når den svarta markeringen.',
+    'Torka av Café Station 1™ med en trasa.',
+  ] : [
+    'Check the indicator lights on the purifier and the mineraliser.',
+    'Green light on purifier → OK. Other colour → check the manual.',
+    'Blue light on the pump head → OK. Any other colour → check the manual.',
+    'Check Coffee Rock levels — replace the bottle when liquid reaches the black bar.',
+    'Wipe down the Café Station 1™ with a cloth.',
+  ];
+  const standstillItems = sv ? [
+    'Töm och spola ur vattentanken om systemet inte har använts på 3 dagar.',
+  ] : [
+    'Purge the water tank if the system has not been used for 3 days.',
+  ];
+  const replItems = sv ? [
+    'Skruva loss pumpen från den tomma flaskan.',
+    'Sätt fast pumpen på den nya Coffee Rock-flaskan — skruva åt ordentligt.',
+    'Kontrollera att slangarna sitter korrekt och att det inte läcker.',
+  ] : [
+    'Unscrew the pump from the empty Coffee Rock bottle.',
+    'Attach the pump to the new bottle — tighten securely.',
+    'Check that the tubes are correctly seated and there are no leaks.',
+  ];
+  const techNote = sv
+    ? 'Filterbyten och membranservice utförs av certifierad tekniker — kontakta din distributör för service.'
+    : 'Filter replacements and membrane servicing are performed by a certified technician — contact your distributor for service.';
+
+  const li = items => items.map(i => `<li>${esc(i)}</li>`).join('');
+  const clockIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+  const calIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+  const bottleIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M9 3h6l1 4H8L9 3z"/><path d="M8 7v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7"/><line x1="12" y1="11" x2="12" y2="17"/></svg>';
+
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2 class="picker-h">${esc(title)}</h2>
+    <p class="picker-sub">${esc(intro)}</p>
+    <div class="maint-section">
+      <div class="maint-freq">${clockIcon}${esc(dailyTitle)}</div>
+      <ul class="maint-list">${li(dailyItems)}</ul>
+    </div>
+    <div class="maint-section">
+      <div class="maint-freq">${calIcon}${esc(standstillTitle)}</div>
+      <ul class="maint-list">${li(standstillItems)}</ul>
+    </div>
+    <div class="maint-section">
+      <div class="maint-freq">${bottleIcon}${esc(replTitle)}</div>
+      <ul class="maint-list">${li(replItems)}</ul>
+    </div>
+    <div class="maint-tech-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      ${esc(techNote)}
+    </div>`;
+  bindBack();
 }
 
 function renderInstallationPicker() {
@@ -330,26 +412,22 @@ function renderInstallationPicker() {
     <div class="prod-grid">
       <button class="prod" id="installCafe">
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
-        <span class="prod-name">Café Station</span>
-        <span class="prod-tag">${esc(L.mode_install_sub)}</span>
+        <div class="prod-text"><span class="prod-name">Café Station</span><span class="prod-tag">${esc(L.mode_install_sub)}</span></div>
       </button>
       <button class="prod disabled" disabled aria-disabled="true">
         <span class="soon">${esc(L.soon)}</span>
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11h16"/><path d="M6 11V7a6 6 0 0 1 12 0v4"/><path d="M5 11l1.5 8a2 2 0 0 0 2 1.7h7a2 2 0 0 0 2-1.7L20 11"/></svg></div>
-        <span class="prod-name">Brew Station</span>
-        <span class="prod-tag">${esc(L.soon)}</span>
+        <div class="prod-text"><span class="prod-name">Brew Station</span><span class="prod-tag">${esc(L.soon)}</span></div>
       </button>
       <button class="prod disabled" disabled aria-disabled="true">
         <span class="soon">${esc(L.soon)}</span>
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <span class="prod-name">Bluewater PRO</span>
-        <span class="prod-tag">${esc(L.soon)}</span>
+        <div class="prod-text"><span class="prod-name">Bluewater PRO</span><span class="prod-tag">${esc(L.soon)}</span></div>
       </button>
       <button class="prod disabled" disabled aria-disabled="true">
         <span class="soon">${esc(L.soon)}</span>
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
-        <span class="prod-name">Bluewater Spirit</span>
-        <span class="prod-tag">${esc(L.soon)}</span>
+        <div class="prod-text"><span class="prod-name">Bluewater Spirit</span><span class="prod-tag">${esc(L.soon)}</span></div>
       </button>
     </div>`;
   bindBack();
@@ -404,20 +482,17 @@ function renderProductPicker() {
     <div class="prod-grid">
       <button class="prod" id="prodCafe">
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
-        <span class="prod-name">Café Station</span>
-        <span class="prod-tag">${esc(L.cafe)}</span>
+        <div class="prod-text"><span class="prod-name">Café Station</span><span class="prod-tag">${esc(L.cafe)}</span></div>
       </button>
       <button class="prod disabled" disabled aria-disabled="true">
         <span class="soon">${esc(L.soon)}</span>
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
-        <span class="prod-name">Bluewater Spirit</span>
-        <span class="prod-tag">${esc(L.soon)}</span>
+        <div class="prod-text"><span class="prod-name">Bluewater Spirit</span><span class="prod-tag">${esc(L.soon)}</span></div>
       </button>
       <button class="prod disabled" disabled aria-disabled="true">
         <span class="soon">${esc(L.soon)}</span>
         <div class="prod-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11h16"/><path d="M6 11V7a6 6 0 0 1 12 0v4"/><path d="M5 11l1.5 8a2 2 0 0 0 2 1.7h7a2 2 0 0 0 2-1.7L20 11"/></svg></div>
-        <span class="prod-name">Brew Station</span>
-        <span class="prod-tag">${esc(L.soon)}</span>
+        <div class="prod-text"><span class="prod-name">Brew Station</span><span class="prod-tag">${esc(L.soon)}</span></div>
       </button>
     </div>`;
   document.getElementById('prodCafe').onclick = () => { currentProduct = 'cafe_station'; currentPurifier = null; navTo('purifier'); };
@@ -527,6 +602,98 @@ function renderQuestion(id) {
     const o = options[+btn.dataset.i];
     btn.onclick = () => navTo(o.next, { question: node.question, answer: o.label });
   });
+}
+
+function renderChecklist(id) {
+  const node = KB.diagnostic_steps[id];
+  if (!node) return renderNotResolved();
+  showProgressBar(true);
+  setProgress(progressFor(false));
+  animateCard();
+  const isSv = window.currentLang !== 'en';
+  const answers = {};
+  const labels = {
+    yes: isSv ? 'Ja, ser normal ut' : 'Yes, looks normal',
+    no: isSv ? 'Nej, något är fel' : 'No, something is wrong',
+    dontknow: isSv ? 'Vet ej, kan inte se den' : "Don't know, can't see it",
+    cont: isSv ? 'Fortsätt' : 'Continue'
+  };
+
+  function partsHtml() {
+    return node.parts.map(p => {
+      const a = answers[p.id];
+      return `
+        <div class="checklist-part" data-part="${esc(p.id)}">
+          <div class="checklist-part-header">
+            <span class="checklist-part-label">${esc(p.label)}</span>
+            <span class="checklist-part-state">${esc(p.normal_state)}</span>
+          </div>
+          <div class="checklist-btns">
+            <button class="btn-check ${a === 'yes' ? 'selected' : ''}" data-part="${esc(p.id)}" data-val="yes">${esc(labels.yes)}</button>
+            <button class="btn-check btn-check-no ${a === 'no' ? 'selected' : ''}" data-part="${esc(p.id)}" data-val="no">${esc(labels.no)}</button>
+            <button class="btn-check btn-check-dk ${a === 'dontknow' ? 'selected' : ''}" data-part="${esc(p.id)}" data-val="dontknow">${esc(labels.dontknow)}</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function render() {
+    const allAnswered = node.parts.every(p => answers[p.id]);
+    cardEl().innerHTML = `
+      ${backBtnHtml()}
+      <h2>${esc(node.question)}</h2>
+      ${node.help_text ? `<p>${esc(node.help_text)}</p>` : ''}
+      <div class="checklist-parts">${partsHtml()}</div>
+      ${allAnswered ? `<button class="btn btn-primary" id="checklistContinue">${esc(labels.cont)}</button>` : ''}`;
+    bindBack();
+    bindChecklist();
+  }
+
+  function bindChecklist() {
+    cardEl().querySelectorAll('.btn-check').forEach(btn => {
+      btn.onclick = () => {
+        const partId = btn.dataset.part;
+        const val = btn.dataset.val;
+        if (val === 'dontknow') {
+          showCantSeePopup(node.cant_see_hint, () => {
+            answers[partId] = 'dontknow';
+            render();
+          });
+        } else {
+          answers[partId] = val;
+          render();
+        }
+      };
+    });
+    const cont = document.getElementById('checklistContinue');
+    if (cont) cont.onclick = () => {
+      const sorted = [...node.parts].sort((a, b) => a.priority - b.priority);
+      const firstNo = sorted.find(p => answers[p.id] === 'no');
+      const answerSummary = node.parts.map(p => `${p.label}: ${answers[p.id]}`).join(', ');
+      if (firstNo) {
+        navTo(firstNo.no_route, { question: node.question, answer: answerSummary });
+      } else {
+        navTo(node.all_ok_route, { question: node.question, answer: answerSummary });
+      }
+    };
+  }
+
+  render();
+}
+
+function showCantSeePopup(hint, onDismiss) {
+  const overlay = document.createElement('div');
+  overlay.className = 'popup-overlay';
+  overlay.innerHTML = `
+    <div class="popup-box">
+      <p>${esc(hint)}</p>
+      <button class="btn btn-primary" id="popupOk">OK</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#popupOk').onclick = () => {
+    overlay.remove();
+    onDismiss();
+  };
 }
 
 function renderSolution(id) {

@@ -14,7 +14,7 @@
       "title": "Inget vatten kommer ut",
       "icon": "droplet-off",
       "sort_order": 1,
-      "start_step": "noWater1",
+      "start_step": "nw_tank",
       "routing_keywords": [
         "inget vatten",
         "no water",
@@ -122,7 +122,7 @@
       "options": [
         {
           "label": "Inget vatten kommer ut",
-          "next": "step:noWater1",
+          "next": "step:nw_tank",
           "type": "primary"
         },
         {
@@ -153,33 +153,34 @@
       ]
     },
     "noWater1": {
-      "question": "Titta på hela systemet — vad ser du?",
-      "help_text": "Titta på alla delar av Café Station och Bluewater Spirit under bänken.",
-      "image": null,
-      "image_alt": null,
-      "safety_warning": null,
-      "options": [
+      "type": "checklist",
+      "question": "Kontrollera varje del — ser den normal ut?",
+      "help_text": "Titta under bänken och kontrollera varje del av systemet.",
+      "parts": [
         {
-          "label": "Lamporna lyser",
-          "next": "step:nw_tank",
-          "type": "primary"
+          "id": "controlbox",
+          "label": "Kontrollbox",
+          "normal_state": "Övre lampan är grön (lila när tanken fylls på)",
+          "priority": 1,
+          "no_route": "step:lights1"
         },
         {
-          "label": "Lamporna blinkar",
-          "next": "step:nw_which_unit",
-          "type": "primary"
+          "id": "booster",
+          "label": "Boosterpump",
+          "normal_state": "Röd knapp står i läge I (på)",
+          "priority": 2,
+          "no_route": "solution:reset_booster"
         },
         {
-          "label": "Lamporna är släckta",
-          "next": "solution:nw_off",
-          "type": "secondary"
-        },
-        {
-          "label": "Vet ej",
-          "next": "step:nw_tank",
-          "type": "dont_know"
+          "id": "spirit",
+          "label": "Bluewater Spirit",
+          "normal_state": "ON-lampan lyser stadigt grönt",
+          "priority": 3,
+          "no_route": "solution:spirit_blink"
         }
-      ]
+      ],
+      "all_ok_route": "step:nw_tank",
+      "cant_see_hint": "Om problemet inte löser sig, gå till den delen och starta felsökningen igen."
     },
     "nw_which_unit": {
       "question": "Var sitter problemet?",
@@ -253,18 +254,13 @@
       "options": [
         {
           "label": "Ja, det finns vatten",
-          "next": "solution:noWater_sol_connection",
+          "next": "solution:noWater_sol_pump",
           "type": "primary"
         },
         {
           "label": "Nej, det finns inget vatten",
-          "next": "step:nw_tank_empty",
+          "next": "step:noWater_lights",
           "type": "primary"
-        },
-        {
-          "label": "Vet ej",
-          "next": "step:nw_tank_empty",
-          "type": "dont_know"
         }
       ]
     },
@@ -294,6 +290,30 @@
           "label": "Vet ej",
           "next": "solution:noWater_sol_tank_mode",
           "type": "dont_know"
+        }
+      ]
+    },
+    "noWater_lights": {
+      "question": "Vilken del visar fel lampor?",
+      "help_text": "Titta på enheterna under bänken. Vad ser du?",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Kontrollboxen visar fel lampor — inte grön eller lila",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "primary"
+        },
+        {
+          "label": "Inga lampor alls på kontrollboxen",
+          "next": "solution:check_power_source",
+          "type": "primary"
+        },
+        {
+          "label": "Bluewater Spirit visar mer än bara ett fast grönt ljus",
+          "next": "solution:spirit_blink",
+          "type": "primary"
         }
       ]
     },
@@ -347,11 +367,6 @@
           "label": "Jag har inte mätt TDS än",
           "next": "solution:tasteBad_sol_measure",
           "type": "secondary"
-        },
-        {
-          "label": "Vet ej",
-          "next": "solution:tasteBad_sol_measure",
-          "type": "dont_know"
         }
       ]
     },
@@ -371,11 +386,6 @@
           "label": "För lågt",
           "next": "solution:tasteBad_sol_low",
           "type": "secondary"
-        },
-        {
-          "label": "Vet ej",
-          "next": "solution:tasteBad_sol_dontknow",
-          "type": "dont_know"
         }
       ]
     },
@@ -462,7 +472,7 @@
       "image": null,
       "image_alt": null,
       "safety_warning": {
-        "text": "Stäng av vattentillförseln omedelbart — eller dra ur strömkontakten till Bluewater Spirit (renaren) — för att stoppa vattenflödet."
+        "text": "Stäng av vattentillförseln omedelbart — eller dra ur strömkontakten till Bluewater Spirit (renaren) — för att stoppa vattenflödet. Öppna sedan vattenkranen eller flusha vatten genom grupparmarna för att tömma ner tanken från den höga vattennivån."
       },
       "options": [
         {
@@ -529,7 +539,7 @@
         },
         {
           "label": "Nej, inget vatten",
-          "next": "step:noWater1",
+          "next": "step:nw_tank",
           "type": "secondary"
         },
         {
@@ -779,7 +789,7 @@
     },
     "noWater_sol_tank_mode": {
       "title": "Kontrollera kontrollboxens läge",
-      "intro": "Kontrollboxen kan ha hamnat i fel läge. Gör så här:",
+      "intro": "Kontrollera om kontrollboxen är i espressoläge genom att titta på lamporna. I espressoläge ska den övre lampan vara grön och den övre knappen lila när tanken fylls på. Om lamporna ser annorlunda ut kan kontrollboxen vara i fel läge. Gör så här för att byta:",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -847,6 +857,68 @@
         "not_solved_next": "end:notResolved"
       }
     },
+    "noWater_sol_booster_power": {
+      "title": "Kontrollera boosterpumpens ström",
+      "intro": "Boosterpumpen skickar vatten från tanken till kaffemaskinen. Om det finns vatten i tanken men inget kommer ut ur maskinen kanske pumpen inte får ström.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Kontrollera att pumpens strömkabel sitter i — både i pumpen och i vägguttaget.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Leta efter en röd knapp på sidan av pumpen. Den ska stå i läge I (på). Om den ser mörk eller avstängd ut, slå på den.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Försök köra kaffemaskinen och lyssna noga på pumpen. Du ska höra ett surrande ljud. Om den är helt tyst har den ingen ström — prova ett annat vägguttag.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "Om pumpen går men det ändå inte kommer ut vatten kan det sitta luft inuti. Stäng av pumpen, koppla loss slangen vid utloppet i några sekunder, sätt tillbaka den och försök igen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Om pumpen går men flödet är svagt — kontrollera att ingen av slangarna är böjd eller veckad.",
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Det löste problemet!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fungerar fortfarande inte",
+        "not_solved_next": "end:notResolved"
+      }
+    },
     "noWater_sol_connection": {
       "title": "Kontrollera anslutningen mellan boosterpumpen och kaffemaskinen",
       "intro": "Kontrollera slangen från boosterpumpen till kaffemaskinen. Se till att anslutningen sitter ordentligt och att slangen inte är knickad.",
@@ -873,7 +945,7 @@
         "solved_label": "Det löste problemet!",
         "solved_next": "end:resolved",
         "not_solved_label": "Fungerar fortfarande inte",
-        "not_solved_next": "end:notResolved"
+        "not_solved_next": "solution:noWater_sol_booster_power"
       }
     },
     "spirit_blink": {
@@ -1201,7 +1273,7 @@
       "steps": [
         {
           "number": 1,
-          "text": "Kontrollera att Spirits strömkabel sitter ordentligt i båda ändar.",
+          "text": "Kontrollera att strömkabeln är ansluten i båda ändar — till Spirit och till vägguttaget.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1209,7 +1281,7 @@
         },
         {
           "number": 2,
-          "text": "Kontrollera att vägguttaget fungerar — testa med en annan apparat.",
+          "text": "Kontrollera säkringarna i säkringsskåpet — se till att ingen har löst ut.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1217,6 +1289,14 @@
         },
         {
           "number": 3,
+          "text": "Kontrollera att vägguttaget fungerar — testa med en annan apparat.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
           "text": "Om ON-ljuset blinkar långsamt medan FILTER- och SERVICE-ljuset lyser kan kranen inte vara helt stängd, eller så finns en liten läcka — stäng kranen helt; om det kvarstår, dra ur strömmen och kontrollera läckor.",
           "image": null,
           "gif": null,
@@ -1267,7 +1347,7 @@
     },
     "reset_controlbox": {
       "title": "Återställ kontrollboxen (ström + läge)",
-      "intro": "Att återställa kontrollboxen rensar fel läge eller ett flottörbrytar-fel.",
+      "intro": "Att återställa kontrollboxen rensar fel läge.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1318,7 +1398,7 @@
           "badge": null
         }
       ],
-      "note": "OBS: ett flottörbrytar-fel visas som att ON-ljuset plus båda knapparna blinkar orange — se till att tanken är tom, dra sedan ur och sätt i strömmen till kontrollboxen igen.",
+      "note": null,
       "videos": [],
       "documents": [],
       "photo_gallery": [],
@@ -1567,8 +1647,8 @@
       }
     },
     "tasteBad_sol_flat": {
-      "title": "Kaffet smakar platt — mineralnivån är för hög",
-      "intro": "Platt kaffe beror oftast på att mineralnivån i tankvattnet är för hög.",
+      "title": "Kaffet smakar platt — kontrollera doseringsnivån först",
+      "intro": "Platt kaffe beror oftast på att mineralnivån är för hög. Börja med att kontrollera vilken doseringsnivå som är inställd i Bluewater-appen.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1580,7 +1660,7 @@
       "steps": [
         {
           "number": 1,
-          "text": "Testa vattnet som kommer ut ur renaren (TDS före mineralisering) för att verifiera att reningen är korrekt.",
+          "text": "Öppna Bluewater Serve-appen och kontrollera vilken doseringsnivå som är inställd — se till att den stämmer med den rekommenderade nivån för er uppställning.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1588,7 +1668,7 @@
         },
         {
           "number": 2,
-          "text": "Säkerställ att du mäter TDS rätt och att din TDS-mätare följer den teoretiska tabellen.",
+          "text": "Använd TDS-verktyget för att mäta aktuellt TDS och jämför med vad doseringsinställningen förväntas ge.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1609,16 +1689,18 @@
       ],
       "photo_gallery": [],
       "mid_step_help": null,
-      "follow_up": {
-        "solved_label": "Det löste problemet!",
-        "solved_next": "end:resolved",
-        "not_solved_label": "Fungerar fortfarande inte",
-        "not_solved_next": "end:notResolved"
-      }
+      "after_text": "Vad visar TDS-mätningen jämfört med appinställningen?",
+      "options": [
+        {
+          "label": "TDS är för högt — stämmer inte med appinställningen",
+          "next": "solution:tasteBad_sol_flat_support",
+          "type": "primary"
+        }
+      ]
     },
     "tasteBad_sol_acidic": {
       "title": "Kaffet smakar syrligt — mineraldoseringen är för låg",
-      "intro": "Syrligt kaffe beror oftast på att mineraldoseringen är för låg.",
+      "intro": "Syrligt kaffe beror oftast på att för lite mineral tillsätts i vattnet. Välj var du vill börja:",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1627,43 +1709,25 @@
       "about_page_required": false,
       "_placeholder": false,
       "tools_needed": [],
-      "steps": [
-        {
-          "number": 1,
-          "text": "Flusha den trycklösa tanken tills systemet börjar fylla på, och kontrollera att den blå lampan på doseringspumpen snurrar under tankpåfyllningen (då doserar den).",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 2,
-          "text": "Kontrollera att mineralbehållaren (Coffee Rock) inte är tom.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 3,
-          "text": "Kontrollera mineralslangen — inga knickar eller blockeringar.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        }
-      ],
-      "note": "OBS: den blå lampan ska bara snurra när den trycklösa tanken fylls på — inte under en kaffeshot. Att den inte snurrar under en shot är normalt.",
+      "steps": [],
+      "note": null,
       "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
-      "follow_up": {
-        "solved_label": "Det löste problemet!",
-        "solved_next": "end:resolved",
-        "not_solved_label": "Fungerar fortfarande inte",
-        "not_solved_next": "step:tubing_q"
-      }
+      "after_text": "Vad vill du kontrollera?",
+      "options": [
+        {
+          "label": "Hur man kontrollerar om doseringspumpen fungerar",
+          "next": "solution:tasteBad_sol_acidic_check",
+          "type": "primary"
+        },
+        {
+          "label": "Doseringspumpens lampa lyser inte alls",
+          "next": "solution:pair_control_dosing",
+          "type": "secondary"
+        }
+      ]
     },
     "tasteBad_declog": {
       "title": "Mineralslangen är blockerad — rensa kristaller",
@@ -1859,17 +1923,12 @@
           "label": "Värdet verkar för lågt",
           "next": "solution:tasteBad_sol_low",
           "type": "secondary"
-        },
-        {
-          "label": "Vet ej vad det ska vara",
-          "next": "solution:tasteBad_sol_dontknow",
-          "type": "dont_know"
         }
       ]
     },
     "tasteBad_sol_high": {
-      "title": "TDS är för högt",
-      "intro": "",
+      "title": "TDS för högt — testa RO-vattnet först",
+      "intro": "Börja med att mäta vattnet direkt från RO-maskinen, innan det går genom mineraldoseringen. Det avgör om problemet är membranet/förfilter eller doseringspumpen.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1881,23 +1940,7 @@
       "steps": [
         {
           "number": 1,
-          "text": "Kontrollera doseringsnivån i Bluewater-appen eller på kontrollboxen — den kan stå för högt.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 2,
-          "text": "Mät TDS direkt från reningssteget (INNAN mineraldoseringen). Om det visar över 10 ppm kan filtermembranet behöva bytas — kontakta Bluewater-support.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 3,
-          "text": "Öppna Bluewater-appen → Inställningar → Hantera enheter → verifiera att doseringsinställningen är korrekt.",
+          "text": "Använd TDS-mätningsprotokoll för att mäta vattnet direkt från renaren — innan mineraldoseringen.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1905,12 +1948,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167734",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [
         {
           "url": "docs/TDS-Protocol.pdf",
@@ -1923,12 +1961,19 @@
       ],
       "photo_gallery": [],
       "mid_step_help": null,
-      "follow_up": {
-        "solved_label": "Det löste problemet!",
-        "solved_next": "end:resolved",
-        "not_solved_label": "Fungerar fortfarande inte",
-        "not_solved_next": "end:notResolved"
-      }
+      "after_text": "Vad visar RO-vattnets mätvärde?",
+      "options": [
+        {
+          "label": "Över 10 ppm",
+          "next": "solution:tasteBad_sol_high_ro_support",
+          "type": "primary"
+        },
+        {
+          "label": "Under 10 ppm — kontrollera doseringspumpen",
+          "next": "solution:tasteBad_sol_high_dosing",
+          "type": "secondary"
+        }
+      ]
     },
     "tasteBad_sol_low": {
       "title": "TDS är för lågt",
@@ -2032,7 +2077,7 @@
     },
     "lights_sol_general": {
       "title": "Kontrollera kontrollboxen",
-      "intro": "Prova dessa steg:",
+      "intro": "Kontrollboxens lampor ska visa:\n• Övre lampa: Grön\n• Mellersta lampa: av, eller lila när tanken fylls på\n• Nedre lampa: av\n\nProva dessa steg:",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -2070,7 +2115,7 @@
       "note": "Om lamporna fortfarande blinkar onormalt, notera vilka lampor som lyser och kontakta support.",
       "videos": [
         {
-          "vimeo_id": "1162167734",
+          "vimeo_id": "1162167921",
           "showcase": "12116945"
         }
       ],
@@ -2086,7 +2131,7 @@
     },
     "lights_sol_dosing": {
       "title": "Problem med doseringslampan",
-      "intro": "Vad visar doseringspumpens lampa?\n• Blå (roterande) = pumpar normalt\n• Orange = låg Coffee Rock-nivå — byt kanister\n• Orange (roterande) = pumpar men Coffee Rock håller på att ta slut — byt snart\n• Grön = knappen är intryckt, pumpen kör\n• Av = pumpen är inte ansluten till ström\nKontrollera att pumpen är ansluten till ström och att mineralkanistern inte är tom.",
+      "intro": "Dra ur kontrollboxens sladdar och sätt i dem igen — detta triggar en påfyllningssekvens av tanken. Vänta 10 sekunder på att den blå lampan börjar snurra.\n\nVad visar doseringspumpens knapp?\n• Blå (roterande) = doserar normalt\n• Grön = pumpen kör — antingen för att du håller inne knappen eller på grund av kortslutning. Om den är grön utan att du håller inne knappen, dra ur strömkabeln.\n• Av = inte ansluten till ström",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -2194,7 +2239,7 @@
         },
         {
           "number": 2,
-          "text": "Om problemet kvarstår, kontakta din Bluewater-återförsäljare.",
+          "text": "Se till att kontrollboxen är i espressoläge — den övre lampan ska vara grön och den övre knappen lila om tanken fylls på. Om andra lampor lyser, byt till espressoläge.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -2476,6 +2521,324 @@
         "not_solved_label": "Fungerar fortfarande inte",
         "not_solved_next": "end:notResolved"
       }
+    },
+    "tasteBad_sol_flat_support": {
+      "title": "Problem med förfilter, membran eller doseringspump",
+      "intro": "Om TDS bekräftas vara högre än vad appens doseringsinställning förväntar sig kan orsaken vara:\n• Ett slitet eller utgånget förfilter\n• Ett nedbrutet RO-membran\n• Att doseringspumpen doserar för mycket\n\nKontakta ditt lokala Bluewater-supportteam. Ta gärna en skärmdump av Om-sektionen i Bluewater Serve-appen innan du hör av dig — den visar programvaruversioner för alla anslutna delar.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null
+    },
+    "tasteBad_sol_acidic_check": {
+      "title": "Kontrollera doseringspumpen",
+      "intro": "Trigga en påfyllning för att se om doseringspumpen doserar.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Dra ur strömkabeln till kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Sätt i kabeln igen — detta triggar tanken att fylla på.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Vänta 10 sekunder och titta på den blå lampan på toppen av doseringspumpen — den ska börja snurra.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "Den blå lampan snurrar bara när den trycklösa tanken fylls på — inte under en kaffeshot. Att den inte snurrar under en shot är normalt.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Snurrar den blå lampan på doseringspumpen?",
+      "options": [
+        {
+          "label": "Ja — den snurrar blå",
+          "next": "solution:tasteBad_sol_acidic_tube",
+          "type": "primary"
+        },
+        {
+          "label": "Nej — den snurrar inte",
+          "next": "solution:pair_control_dosing",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_sol_acidic_tube": {
+      "title": "Kontrollera mineralslangen",
+      "intro": "Pumpen snurrar — kontrollera nu om mineralvätskan faktiskt når tanken.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Tryck på den blå knappen på doseringspumpen för att prima den manuellt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Titta på silikonslangen — du ska se mineralvätska röra sig genom den.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Rör sig vätska genom slangen?",
+      "options": [
+        {
+          "label": "Ja — vätska rör sig",
+          "next": "solution:tasteBad_sol_acidic_flush",
+          "type": "primary"
+        },
+        {
+          "label": "Nej — slangen verkar blockerad",
+          "next": "solution:tasteBad_declog",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_sol_acidic_flush": {
+      "title": "Flusha och kontrollera TDS",
+      "intro": "Doseringspumpen fungerar. Flusha nu systemet så att det nya mineraliserade vattnet når espressomaskinen.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Trigga en påfyllning (dra ur och sätt i kontrollboxens sladdar) för att fylla tanken med nymineraliserat vatten.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Viktigt: flusha ett par liter genom espressomaskinen för att byta ut vattnet i dess interna tankar mot det nymineraliserade vattnet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Mät TDS och jämför med TDS-tabellen för att bekräfta att nivån är korrekt.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Öppna TDS-verktyget"
+        },
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Ladda ner TDS-mätningsguide (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "TDS ser bra ut — problemet löst",
+        "solved_next": "end:resolved",
+        "not_solved_label": "TDS är fortfarande fel",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_high_ro_support": {
+      "title": "Membran- eller förfilterproblem",
+      "intro": "RO-vatten över 10 ppm innebär att membranet eller förfiltrerna troligtvis är nedslitna och behöver bytas.\n\nKontakta ditt lokala Bluewater-supportteam. Ta gärna en skärmdump av Om-sektionen i Bluewater Serve-appen — den visar programvaruversioner för alla anslutna delar.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null
+    },
+    "tasteBad_sol_high_dosing": {
+      "title": "Kontrollera doseringspumpens lampa",
+      "intro": "RO-vattnet är inom normalt intervall — problemet kan vara doseringspumpen. Titta på lampan på pumpen just nu.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Vad visar doseringspumpens lampa?",
+      "options": [
+        {
+          "label": "Grön (inte det normala blå)",
+          "next": "solution:tasteBad_sol_high_green",
+          "type": "primary"
+        },
+        {
+          "label": "Fast blå",
+          "next": "solution:tasteBad_sol_high_blue_support",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_sol_high_green": {
+      "title": "Doseringspumpen visar grönt — överdoserar",
+      "intro": "Grönt ljus kan innebära att pumpen kör kontinuerligt, vilket gör att TDS blir för högt.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Dra ur strömkabeln till kontrollboxen.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Vänta 10 sekunder.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Sätt i kabeln igen och kontrollera doseringspumpens lampa — den ska nu vara fast blå.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Lampan är nu fast blå",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Fortfarande grön",
+        "not_solved_next": "solution:tasteBad_sol_high_green_support"
+      }
+    },
+    "tasteBad_sol_high_green_support": {
+      "title": "Fel på doseringspumpen",
+      "intro": "Pumpen visar fortfarande grönt efter en strömcykel — detta tyder på ett hårdvarufel.\n\nKontakta ditt lokala Bluewater-supportteam. Ta gärna en skärmdump av Om-sektionen i Bluewater Serve-appen — den visar programvaruversioner för alla anslutna delar.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null
+    },
+    "tasteBad_sol_high_blue_support": {
+      "title": "Hårdvarufel på doseringspumpen",
+      "intro": "Lampan på pumpen är normal (fast blå) men TDS är fortfarande högt — troligtvis ett hårdvarufel på doseringspumpen.\n\nKontakta ditt lokala Bluewater-supportteam. Ta gärna en skärmdump av Om-sektionen i Bluewater Serve-appen — den visar programvaruversioner för alla anslutna delar.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null
     }
   },
   "escalation": {

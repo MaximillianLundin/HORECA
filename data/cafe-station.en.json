@@ -14,7 +14,7 @@
       "title": "No water coming out",
       "icon": "droplet-off",
       "sort_order": 1,
-      "start_step": "noWater1",
+      "start_step": "nw_tank",
       "routing_keywords": [
         "inget vatten",
         "no water",
@@ -122,7 +122,7 @@
       "options": [
         {
           "label": "No water coming out",
-          "next": "step:noWater1",
+          "next": "step:nw_tank",
           "type": "primary"
         },
         {
@@ -153,38 +153,34 @@
       ]
     },
     "noWater1": {
-      "question": "Look at the entire system — what do you see?",
-      "help_text": "Look at all the parts of the Café Station and the Bluewater Spirit under the counter.",
-      "image": null,
-      "image_alt": null,
-      "safety_warning": null,
-      "options": [
+      "type": "checklist",
+      "question": "Check each part — does it look normal?",
+      "help_text": "Look under the counter and check each part of the system.",
+      "parts": [
         {
-          "label": "Lights are on",
-          "next": "step:nw_tank",
-          "type": "primary"
+          "id": "controlbox",
+          "label": "Control box",
+          "normal_state": "Top light is green (turns purple when the tank is filling)",
+          "priority": 1,
+          "no_route": "step:lights1"
         },
         {
-          "label": "Lights are blinking",
-          "next": "step:nw_which_unit",
-          "type": "primary"
+          "id": "booster",
+          "label": "Booster pump",
+          "normal_state": "Red switch is in the I (on) position",
+          "priority": 2,
+          "no_route": "solution:reset_booster"
         },
         {
-          "label": "All lights are off",
-          "next": "solution:nw_off",
-          "type": "secondary"
-        },
-        {
-          "label": "Some lights are off",
-          "next": "step:lights1",
-          "type": "secondary"
-        },
-        {
-          "label": "Don't know",
-          "next": "step:nw_tank",
-          "type": "dont_know"
+          "id": "spirit",
+          "label": "Bluewater Spirit",
+          "normal_state": "ON light is steady green",
+          "priority": 3,
+          "no_route": "solution:spirit_blink"
         }
-      ]
+      ],
+      "all_ok_route": "step:nw_tank",
+      "cant_see_hint": "If the issue isn't resolved, go to that part and start the troubleshooting again."
     },
     "nw_which_unit": {
       "question": "Where is the problem?",
@@ -258,18 +254,13 @@
       "options": [
         {
           "label": "Yes, there is water",
-          "next": "solution:noWater_sol_connection",
+          "next": "solution:noWater_sol_pump",
           "type": "primary"
         },
         {
           "label": "No, there’s no water",
-          "next": "step:nw_tank_empty",
+          "next": "step:noWater_lights",
           "type": "primary"
-        },
-        {
-          "label": "Don't know",
-          "next": "step:nw_tank_empty",
-          "type": "dont_know"
         }
       ]
     },
@@ -299,6 +290,30 @@
           "label": "Don't know",
           "next": "solution:noWater_sol_tank_mode",
           "type": "dont_know"
+        }
+      ]
+    },
+    "noWater_lights": {
+      "question": "Which part is showing wrong lights?",
+      "help_text": "Look at the units under the counter. What do you see?",
+      "image": null,
+      "image_alt": null,
+      "safety_warning": null,
+      "options": [
+        {
+          "label": "Control box lights are wrong — not green or purple",
+          "next": "solution:noWater_sol_tank_mode",
+          "type": "primary"
+        },
+        {
+          "label": "No lights at all on the control box",
+          "next": "solution:check_power_source",
+          "type": "primary"
+        },
+        {
+          "label": "Bluewater Spirit is showing more than just a steady green light",
+          "next": "solution:spirit_blink",
+          "type": "primary"
         }
       ]
     },
@@ -352,11 +367,6 @@
           "label": "I haven’t measured TDS yet",
           "next": "solution:tasteBad_sol_measure",
           "type": "secondary"
-        },
-        {
-          "label": "Don't know",
-          "next": "solution:tasteBad_sol_measure",
-          "type": "dont_know"
         }
       ]
     },
@@ -376,11 +386,6 @@
           "label": "Too low",
           "next": "solution:tasteBad_sol_low",
           "type": "secondary"
-        },
-        {
-          "label": "Don't know",
-          "next": "solution:tasteBad_sol_dontknow",
-          "type": "dont_know"
         }
       ]
     },
@@ -472,7 +477,7 @@
       "image": null,
       "image_alt": null,
       "safety_warning": {
-        "text": "Immediately shut off the water supply — or pull the power plug to the Bluewater Spirit (purifier) — to stop the water from flowing."
+        "text": "Immediately shut off the water supply — or pull the power plug to the Bluewater Spirit (purifier) — to stop the water from flowing. Then open the water faucet or flush water through the group heads to drain the tank down from the high water level."
       },
       "options": [
         {
@@ -539,7 +544,7 @@
         },
         {
           "label": "No, no water",
-          "next": "step:noWater1",
+          "next": "step:nw_tank",
           "type": "secondary"
         },
         {
@@ -838,7 +843,7 @@
     },
     "noWater_sol_tank_mode": {
       "title": "Check the control box mode",
-      "intro": "The control box may be in the wrong mode. Follow these steps:",
+      "intro": "Check if the control box is in Espresso mode by reading the lights. In Espresso mode the top light should be green, and the top button purple when the tank is filling. If the lights look different, the control box may be in the wrong mode. Follow these steps to change it:",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -906,6 +911,68 @@
         "not_solved_next": "end:notResolved"
       }
     },
+    "noWater_sol_booster_power": {
+      "title": "Check the booster pump power",
+      "intro": "The booster pump pushes water from the tank to the coffee machine. If water is in the tank but nothing comes out of the machine, the pump might not be getting power.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Check that the pump's power cable is plugged in — both into the pump and into the wall.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Look for a red switch on the side of the pump. It should be in the I position (on). If it looks dark or off, flip it on.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Try running the coffee machine and listen closely to the pump. You should hear it humming. If it's completely silent, it has no power — try a different wall outlet.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
+          "text": "If the pump is running but still no water comes out, air may be stuck inside. Turn the pump off, disconnect the hose at the outlet end for a few seconds, then reconnect it and try again.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "If the pump runs but the flow is weak, check that none of the hoses are bent or kinked.",
+      "videos": [
+        {
+          "vimeo_id": "1162167921",
+          "showcase": "12116945"
+        }
+      ],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "That solved it!",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still not working",
+        "not_solved_next": "end:notResolved"
+      }
+    },
     "noWater_sol_connection": {
       "title": "Check connection between booster pump and coffee machine",
       "intro": "Check the hose from the booster pump to the coffee machine. Make sure the connection is secure and the hose is not kinked.",
@@ -932,7 +999,7 @@
         "solved_label": "That solved it!",
         "solved_next": "end:resolved",
         "not_solved_label": "Still not working",
-        "not_solved_next": "solution:noWater_sol_tank_mode"
+        "not_solved_next": "solution:noWater_sol_booster_power"
       }
     },
     "spirit_blink": {
@@ -1260,7 +1327,7 @@
       "steps": [
         {
           "number": 1,
-          "text": "Check the Spirit’s power cord is firmly plugged in at both ends.",
+          "text": "Check that the power cable is connected at both ends — into the Spirit and into the wall outlet.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1268,7 +1335,7 @@
         },
         {
           "number": 2,
-          "text": "Check the wall outlet works — test it with another device.",
+          "text": "Check the fuses in the fuse box to make sure none have tripped.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1276,6 +1343,14 @@
         },
         {
           "number": 3,
+          "text": "Check the wall outlet works — test it with another device.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 4,
           "text": "If the ON light flashes slowly while the FILTER and SERVICE lights are on, the faucet may not be fully closed, or there is a small leak — close the faucet fully; if it persists, disconnect power and check for leaks.",
           "image": null,
           "gif": null,
@@ -1326,7 +1401,7 @@
     },
     "reset_controlbox": {
       "title": "Reset the control box (power + mode)",
-      "intro": "Resetting the control box clears a wrong mode or a float-switch error.",
+      "intro": "Resetting the control box clears a wrong mode.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1377,7 +1452,7 @@
           "badge": null
         }
       ],
-      "note": "Note: a float-switch error shows as the ON light plus both buttons flashing orange — make sure the tank is empty, then disconnect and reconnect the control box to power.",
+      "note": null,
       "videos": [],
       "documents": [],
       "photo_gallery": [],
@@ -1626,8 +1701,8 @@
       }
     },
     "tasteBad_sol_flat": {
-      "title": "Coffee tasting flat — mineral level is too high",
-      "intro": "Flat coffee is usually because the mineral level in the tank water is too high.",
+      "title": "Coffee tasting flat — check the dosing level first",
+      "intro": "Flat coffee is usually caused by the mineral level being too high. Start by checking what dosing level is set in the Bluewater app.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1639,7 +1714,7 @@
       "steps": [
         {
           "number": 1,
-          "text": "Test the water coming out of the purifier (TDS before mineralization) to verify the purification is accurate.",
+          "text": "Open the Bluewater Serve app and check what dosing level is set — make sure it matches the recommended level for your setup.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1647,7 +1722,7 @@
         },
         {
           "number": 2,
-          "text": "Make sure you are measuring TDS correctly and that your TDS meter follows the theoretical chart.",
+          "text": "Use the TDS tool to measure the current TDS and compare it with what the dosing level setting predicts.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1668,16 +1743,18 @@
       ],
       "photo_gallery": [],
       "mid_step_help": null,
-      "follow_up": {
-        "solved_label": "That solved it!",
-        "solved_next": "end:resolved",
-        "not_solved_label": "Still not working",
-        "not_solved_next": "end:notResolved"
-      }
+      "after_text": "What does the TDS reading show compared to the app setting?",
+      "options": [
+        {
+          "label": "TDS is too high — it doesn't match the app setting",
+          "next": "solution:tasteBad_sol_flat_support",
+          "type": "primary"
+        }
+      ]
     },
     "tasteBad_sol_acidic": {
       "title": "Coffee tasting acidic — mineral dosing is too low",
-      "intro": "Trigger a refill to check if the dosing pump is actually dosing.",
+      "intro": "Acidic coffee usually means not enough minerals are being added to the water. Choose where to start:",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1686,52 +1763,22 @@
       "about_page_required": false,
       "_placeholder": false,
       "tools_needed": [],
-      "steps": [
-        {
-          "number": 1,
-          "text": "Unplug the power cable from the control box.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 2,
-          "text": "Plug it back in — this triggers the tank to refill.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 3,
-          "text": "Watch the dosing pump light during the refill — it should spin blue.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        }
-      ],
-      "note": "NOTE: the blue light should only spin when the pressureless tank is refilling — not during a coffee shot. It not spinning during a shot is normal.",
+      "steps": [],
+      "note": null,
       "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
-      "after_text": "What does the dosing pump light do during the refill?",
+      "after_text": "What do you want to check?",
       "options": [
         {
-          "label": "Yes — it spins",
-          "next": "end:resolved",
+          "label": "How to check if the dosing pump is working",
+          "next": "solution:tasteBad_sol_acidic_check",
           "type": "primary"
         },
         {
-          "label": "No — it just stays blue",
+          "label": "The dosing pump light is not on at all",
           "next": "solution:pair_control_dosing",
-          "type": "secondary"
-        },
-        {
-          "label": "The light is not on at all",
-          "next": "solution:lights_sol_dosing",
           "type": "secondary"
         }
       ]
@@ -1934,17 +1981,12 @@
           "label": "The value seems too low",
           "next": "solution:tasteBad_sol_low",
           "type": "secondary"
-        },
-        {
-          "label": "Don't know what it should be",
-          "next": "solution:tasteBad_sol_dontknow",
-          "type": "dont_know"
         }
       ]
     },
     "tasteBad_sol_high": {
-      "title": "TDS is too high",
-      "intro": "",
+      "title": "TDS too high — test the RO water first",
+      "intro": "Start by testing the water directly from the RO machine, before it goes through mineral dosing. This tells us whether the issue is the membrane/pre-filters or the dosing pump.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -1956,23 +1998,7 @@
       "steps": [
         {
           "number": 1,
-          "text": "Check the dosing level in the Bluewater app or on the control box — it may be set too high.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 2,
-          "text": "Open the Bluewater app → Settings → Manage Devices → verify the dosing setting is correct.",
-          "image": null,
-          "gif": null,
-          "audio": null,
-          "badge": null
-        },
-        {
-          "number": 3,
-          "text": "Measure TDS directly from the purifier (BEFORE mineral dosing) by using the TDS measurement guide below and then adding that to the TDS Tool. If it reads above 10 ppm, the filter membrane or the pre-filters need to be replaced — contact Bluewater support.",
+          "text": "Use the TDS testing protocol to measure the water coming directly from the purifier — before mineral dosing.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -1993,12 +2019,19 @@
       ],
       "photo_gallery": [],
       "mid_step_help": null,
-      "follow_up": {
-        "solved_label": "That solved it!",
-        "solved_next": "end:resolved",
-        "not_solved_label": "Still not working",
-        "not_solved_next": "end:notResolved"
-      }
+      "after_text": "What does the RO water reading show?",
+      "options": [
+        {
+          "label": "Above 10 ppm",
+          "next": "solution:tasteBad_sol_high_ro_support",
+          "type": "primary"
+        },
+        {
+          "label": "Below 10 ppm — check the dosing pump",
+          "next": "solution:tasteBad_sol_high_dosing",
+          "type": "secondary"
+        }
+      ]
     },
     "tasteBad_sol_low": {
       "title": "TDS is too low",
@@ -2125,7 +2158,7 @@
     },
     "lights_sol_general": {
       "title": "Check the control box",
-      "intro": "The control box lights should be Green, or Green and Purple (when refilling the tank).\n\nTry these steps:",
+      "intro": "The control box lights should be:\n• Top light: Green\n• Middle light: off, or purple when the tank is filling\n• Bottom light: off\n\nTry these steps:",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -2161,7 +2194,7 @@
         },
         {
           "number": 4,
-          "text": "If lights still show abnormally after the restart, check which light is off or blinking:\n• Top light off → no power. Check the power adapter is plugged in at both ends.\n• Middle light off → water valves are closed. Press the 2nd button until it turns Blue (RO water) or Orange (municipal water).\n• Middle light blinking blue → stuck in Mode Programming Setup. Choose the correct mode and press the 3rd button to confirm.\n• Bottom light blinking → stuck in pairing mode. Unplug and replug the power to reset.",
+          "text": "If lights still show abnormally after the restart, check which light is off or blinking:\n• Top light off → no power. Check the power adapter is plugged in at both ends.\n• Middle light blinking blue → stuck in Mode Programming Setup. Choose the correct mode and press the 3rd button to confirm.\n• Bottom light blinking → stuck in pairing mode. Unplug and replug the power to reset.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -2171,7 +2204,7 @@
       "note": "If the control box is green, or green and purple while refilling the tank, the control box is working fine.\n\nIf the lights still blink abnormally, note which lights are on and contact support.",
       "videos": [
         {
-          "vimeo_id": "1162167734",
+          "vimeo_id": "1162167921",
           "showcase": "12116945"
         }
       ],
@@ -2187,7 +2220,7 @@
     },
     "lights_sol_dosing": {
       "title": "Dosing pump light",
-      "intro": "To check whether the dosing pump is acting normally, pull the plug to the control box and put it back in. This forces a refill sequence of the water in the tank, which should make the blue light spin on top of the dosing pump. Wait ten seconds to fully see if it started.\n\nWhat does the dosing pump button show?\n• Blue (rotating) = dosing normally\n• Green = the pump is dosing — either because you are pressing and holding it, or because of a short circuit. If it is green and you are not pressing it, pull the power cord.\n• Off = not connected to power\nMake sure the pump is connected to power and the Coffee Rock container is not empty.",
+      "intro": "To check whether the dosing pump is acting normally, pull the plug to the control box and put it back in. This forces a refill sequence of the water in the tank. Wait 10 seconds for the blue light to start spinning.\n\nWhat does the dosing pump button show?\n• Blue (rotating) = dosing normally\n• Green = the pump is dosing — either because you are pressing and holding it, or because of a short circuit. If it is green and you are not pressing it, pull the power cord.\n• Off = not connected to power",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -2307,7 +2340,7 @@
         },
         {
           "number": 2,
-          "text": "If the problem persists, contact your Bluewater dealer.",
+          "text": "Make sure the control box is in Espresso mode — the top light should be green, and the top button purple if the tank is filling. If other lights are showing, change the mode to Espresso mode.",
           "image": null,
           "gif": null,
           "audio": null,
@@ -2634,7 +2667,7 @@
     },
     "check_power_source": {
       "title": "Check the power source",
-      "intro": "Check the electricity at the source to make sure there's power to the system.",
+      "intro": "Check the electricity at the source to make sure there's power to the system. If the power cable is connected, the top light on the control box should be green. If it is not green, the outlet may be faulty — try a different one.",
       "estimated_time_minutes": null,
       "severity": null,
       "safety_warning": null,
@@ -2675,6 +2708,324 @@
       "photo_gallery": [],
       "mid_step_help": null,
       "options": null,
+      "follow_up": null
+    },
+    "tasteBad_sol_flat_support": {
+      "title": "Pre-filter, membrane or dosing pump issue",
+      "intro": "If TDS is confirmed higher than the app dosing setting suggests, the cause could be:\n• A worn or expired pre-filter\n• A degraded RO membrane\n• The dosing pump overdosing\n\nContact your local Bluewater support team. Before reaching out, take a screenshot of the About section in the Bluewater Serve app — it shows the software versions of all connected parts.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null
+    },
+    "tasteBad_sol_acidic_check": {
+      "title": "Check the dosing pump",
+      "intro": "Trigger a refill to see if the dosing pump is dosing.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Unplug the power cable from the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Plug it back in — this triggers the tank to refill.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Wait 10 seconds and watch the blue light on top of the dosing pump — it should start spinning.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": "The blue light only spins when the pressureless tank is refilling — not during a coffee shot. It not spinning during a shot is normal.",
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Is the blue light on the dosing pump spinning?",
+      "options": [
+        {
+          "label": "Yes — it is spinning blue",
+          "next": "solution:tasteBad_sol_acidic_tube",
+          "type": "primary"
+        },
+        {
+          "label": "No — it is not spinning",
+          "next": "solution:pair_control_dosing",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_sol_acidic_tube": {
+      "title": "Check the mineral tube",
+      "intro": "The pump is spinning — now check if mineral fluid is actually reaching the tank.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Press the blue button on the dosing pump to manually prime it.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Watch the silicone tube — you should see mineral fluid moving through it.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "Is fluid moving through the tube?",
+      "options": [
+        {
+          "label": "Yes — fluid is moving",
+          "next": "solution:tasteBad_sol_acidic_flush",
+          "type": "primary"
+        },
+        {
+          "label": "No — the tube looks blocked",
+          "next": "solution:tasteBad_declog",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_sol_acidic_flush": {
+      "title": "Flush and check TDS",
+      "intro": "The dosing pump is working. Now flush the system so the new mineralised water reaches the espresso machine.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Trigger a refill (unplug and replug the control box) to fill the tank with freshly mineralised water.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Important: flush a couple of liters through the espresso machine to replace the water in its internal tanks with the new mineralised water.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Measure TDS and compare with the TDS chart to confirm the level is correct.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [
+        {
+          "url": "https://bluewater-tds-validator.vercel.app",
+          "label": "Open the TDS tool"
+        },
+        {
+          "url": "docs/TDS-Protocol.pdf",
+          "label": "Download TDS measurement guide (PDF)"
+        }
+      ],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "TDS looks good — issue resolved",
+        "solved_next": "end:resolved",
+        "not_solved_label": "TDS is still off",
+        "not_solved_next": "end:notResolved"
+      }
+    },
+    "tasteBad_sol_high_ro_support": {
+      "title": "Membrane or pre-filter issue",
+      "intro": "RO water above 10 ppm means the membrane or pre-filters are likely degraded and need replacing.\n\nContact your local Bluewater support team. Before reaching out, take a screenshot of the About section in the Bluewater Serve app — it shows the software versions of all connected parts.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null
+    },
+    "tasteBad_sol_high_dosing": {
+      "title": "Check the dosing pump light",
+      "intro": "RO water is within range — the issue may be with the dosing pump. Check the light on the pump right now.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "after_text": "What does the dosing pump light show?",
+      "options": [
+        {
+          "label": "Green (not the normal blue)",
+          "next": "solution:tasteBad_sol_high_green",
+          "type": "primary"
+        },
+        {
+          "label": "Steady blue",
+          "next": "solution:tasteBad_sol_high_blue_support",
+          "type": "secondary"
+        }
+      ]
+    },
+    "tasteBad_sol_high_green": {
+      "title": "Dosing pump showing green — overdosing",
+      "intro": "A green light means the pump may be running continuously, which causes TDS to be too high.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": false,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [
+        {
+          "number": 1,
+          "text": "Pull the power cord from the control box.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 2,
+          "text": "Wait 10 seconds.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        },
+        {
+          "number": 3,
+          "text": "Plug it back in and check the dosing pump light — it should now be steady blue.",
+          "image": null,
+          "gif": null,
+          "audio": null,
+          "badge": null
+        }
+      ],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": {
+        "solved_label": "Light is now steady blue",
+        "solved_next": "end:resolved",
+        "not_solved_label": "Still showing green",
+        "not_solved_next": "solution:tasteBad_sol_high_green_support"
+      }
+    },
+    "tasteBad_sol_high_green_support": {
+      "title": "Dosing pump fault",
+      "intro": "The pump is still showing green after a power cycle — this indicates a hardware fault.\n\nContact your local Bluewater support team. Before reaching out, take a screenshot of the About section in the Bluewater Serve app — it shows the software versions of all connected parts.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
+      "follow_up": null
+    },
+    "tasteBad_sol_high_blue_support": {
+      "title": "Dosing pump hardware issue",
+      "intro": "The pump light is normal (steady blue) but TDS is still high — this is likely a dosing pump hardware fault.\n\nContact your local Bluewater support team. Before reaching out, take a screenshot of the About section in the Bluewater Serve app — it shows the software versions of all connected parts.",
+      "estimated_time_minutes": null,
+      "severity": null,
+      "safety_warning": null,
+      "fix_type": null,
+      "bypass": false,
+      "about_page_required": true,
+      "_placeholder": false,
+      "tools_needed": [],
+      "steps": [],
+      "note": null,
+      "videos": [],
+      "documents": [],
+      "photo_gallery": [],
+      "mid_step_help": null,
       "follow_up": null
     },
     "pair_control_dosing": {

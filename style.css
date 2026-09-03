@@ -698,24 +698,25 @@ footer {
   margin-bottom: 1.25rem;
 }
 .prod-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
 }
 .prod {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  text-align: center;
-  gap: 0.6rem;
-  padding: 1.75rem 1rem;
+  text-align: left;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
   background: #f8f8fa;
   border: 2px solid #e0e0e0;
-  border-radius: 16px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  width: 100%;
 }
 .prod:hover {
   border-color: #0A2FB6;
@@ -723,14 +724,20 @@ footer {
   transform: translateY(-2px);
 }
 .prod-ic {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
   background: #f0f4ff;
   color: #0A2FB6;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.prod-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 .prod-name {
   font-size: 1rem;
@@ -935,6 +942,93 @@ footer {
 }
 .help-link:hover { text-decoration: underline; }
 
+/* Maintenance guide */
+.maint-section {
+  background: #f9f9fb;
+  border: 1px solid #e8e8ed;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 0.85rem;
+}
+.maint-freq {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0A2FB6;
+  margin-bottom: 0.6rem;
+}
+.maint-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.maint-list li {
+  font-size: 0.93rem;
+  color: #1d1d1f;
+  padding-left: 1.1rem;
+  position: relative;
+  line-height: 1.45;
+}
+.maint-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #0A2FB6;
+  font-weight: 700;
+}
+.maint-tech-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.84rem;
+  color: #5d4037;
+  line-height: 1.45;
+  margin-top: 0.25rem;
+}
+.maint-tech-note svg { flex-shrink: 0; margin-top: 2px; stroke: #f59e0b; }
+
+/* Checklist step */
+.checklist-parts { display: flex; flex-direction: column; gap: 0.75rem; margin: 1rem 0 1.25rem; }
+.checklist-part { background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.9rem 1rem; }
+.checklist-part-header { margin-bottom: 0.65rem; }
+.checklist-part-label { display: block; font-weight: 600; font-size: 0.95rem; color: #1a202c; }
+.checklist-part-state { display: block; font-size: 0.8rem; color: #64748b; margin-top: 0.15rem; }
+.checklist-btns { display: flex; flex-direction: column; gap: 0.4rem; }
+.btn-check {
+  width: 100%; text-align: left; padding: 0.55rem 0.85rem;
+  border: 1.5px solid #cbd5e1; border-radius: 8px;
+  background: #fff; font-size: 0.875rem; color: #374151; cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-check:hover { border-color: #1B3A5C; background: #f1f5f9; }
+.btn-check.selected { border-color: #1B3A5C; background: #1B3A5C; color: #fff; font-weight: 600; }
+.btn-check-no.selected { border-color: #c0392b; background: #c0392b; }
+.btn-check-dk { color: #64748b; border-style: dashed; }
+.btn-check-dk.selected { border-color: #64748b; background: #64748b; color: #fff; border-style: solid; }
+
+/* Can't see popup */
+.popup-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center; z-index: 999; padding: 1.5rem;
+}
+.popup-box {
+  background: #fff; border-radius: 16px; padding: 1.5rem 1.75rem;
+  max-width: 340px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  text-align: center;
+}
+.popup-box p { font-size: 0.95rem; color: #374151; line-height: 1.55; margin-bottom: 1.25rem; }
+
 @media (max-width: 480px) {
-  .prod-grid { grid-template-columns: 1fr; }
+  .prod { padding: 0.85rem 1rem; }
 }
