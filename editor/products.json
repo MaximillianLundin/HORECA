@@ -1,0 +1,17 @@
+{
+  "products": [
+    {
+      "slug": "cafe-station",
+      "display_name": "Café Station 1™",
+      "bucket": "cafe-station-knowledge",
+      "file_pattern": "cafe-station.{lang}.json",
+      "primary_language": "en",
+      "languages": ["en", "sv"]
+    }
+  ],
+  "supabase": {
+    "url": "https://ghudwqytclfpiouzqzvc.supabase.co",
+    "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdodWR3cXl0Y2xmcGlvdXpxenZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MTk0MTIsImV4cCI6MjA5MDA5NTQxMn0.DoDwit2k5NRkt6x5EynQg3RJ5CrlqaTH5U6Ufgf-MoY",
+    "storage_base": "https://ghudwqytclfpiouzqzvc.supabase.co/storage/v1/object/public"
+  }
+}
