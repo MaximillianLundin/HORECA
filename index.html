@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Café Station Support">
   <title>Café Station Support</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <div class="header-inner">
-      <div class="logo" id="logoHome" style="cursor:pointer;">
+      <div class="logo" id="logoHome" role="link" tabindex="0" aria-label="Café Station Support – home">
         <svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 283.46 54.28" aria-label="Bluewater">
           <defs>
             <style>.bw-cls-1{clip-path:url(#bw-clip)}.bw-cls-2{fill:none;stroke-width:0px}.bw-cls-3{fill:#18181b;stroke-width:0px}</style>
@@ -28,22 +35,22 @@
             <path class="bw-cls-3" d="M283.46,18.46v5.76c-.96-.1-1.87-.14-2.73-.14-3.6,0-5.66,1.44-5.66,6.62v13.53h-5.71v-25.8h5.61v4.6c1.39-2.88,3.88-4.6,7-4.65.43,0,1.06.05,1.49.1v-.02Z"/>
           </g></g>
         </svg>
-        <span class="logo-sub">Bluewater Commercial Support App</span>
+        <span class="logo-sub">Café Station Support</span>
       </div>
       <div class="lang-switcher" id="langSwitcher">
-        <button class="lang-btn" id="langBtn">
-          <svg class="globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M2 12h20"/>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        <button class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false">
+          <svg class="globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18"/>
+            <path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/>
           </svg>
-          <span id="currentLangLabel">SV</span>
-          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <span id="currentLangLabel">EN</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
             <path d="M6 9l6 6 6-6"/>
           </svg>
         </button>
         <div class="lang-dropdown" id="langDropdown">
-          <input type="text" class="lang-search" id="langSearch" placeholder="Search...">
+          <input type="text" class="lang-search" id="langSearch" placeholder="Search…" autocomplete="off">
           <div class="lang-list" id="langList"></div>
         </div>
       </div>
@@ -51,19 +58,17 @@
   </header>
 
   <main>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <div id="trail"></div>
+    <div id="trail" hidden></div>
     <div class="card" id="card"></div>
   </main>
 
   <footer>
-    <p>&copy; 2026 Bluewater Group</p>
+    <p>&copy; 2026 Bluewater Group &middot; <a href="mailto:support@bluewatergroup.com">support@bluewatergroup.com</a> &middot; <a href="#privacy" id="privacyLink">Privacy</a></p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="translations.js"></script>
+  <script src="privacy.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
