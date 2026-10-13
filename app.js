@@ -126,6 +126,7 @@ function pickerStrings() {
       suggest_label: 'Menar du…',
       or_label: 'eller',
       tile_troubleshoot: 'Felsök steg för steg', tile_troubleshoot_sub: 'Välj problem från en lista istället',
+      tile_tds: 'Så kontrollerar och åtgärdar du TDS-problem', tile_tds_sub: 'Mät TDS och åtgärda för höga eller låga värden',
       setup_label: 'Din anläggning', setup_with: 'med',
       // intake
       intake_you_wrote: 'Du skrev',
@@ -171,6 +172,7 @@ function pickerStrings() {
       suggest_label: 'Do you mean…',
       or_label: 'or',
       tile_troubleshoot: 'Troubleshoot step by step', tile_troubleshoot_sub: 'Pick the problem from a list instead',
+      tile_tds: 'How to check and handle TDS issues', tile_tds_sub: 'Measure TDS and fix readings that are too high or too low',
       setup_label: 'Your setup', setup_with: 'with',
       // intake
       intake_you_wrote: 'You wrote',
@@ -694,6 +696,7 @@ function renderAsk() {
 
     <div class="tiles">
       ${tileHtml('tileTroubleshoot', ICON.search, L.tile_troubleshoot, L.tile_troubleshoot_sub)}
+      ${tileHtml('tileTds', ICON.drop, L.tile_tds, L.tile_tds_sub)}
     </div>`;
   bindBack();
 
@@ -735,6 +738,7 @@ function renderAsk() {
     btn.onclick = () => { const iss = issues[+btn.dataset.i]; intakeText = ''; goToIssue(iss, chipLabel(iss), false); };
   });
   document.getElementById('tileTroubleshoot').onclick = () => navTo('step:welcome', { question: L.ask_title, answer: L.tile_troubleshoot });
+  document.getElementById('tileTds').onclick = () => { intakeText = ''; navTo('step:tasteBad1', { question: L.ask_title, answer: L.tile_tds }); };
 }
 
 function renderIntake() {
