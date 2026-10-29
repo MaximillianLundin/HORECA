@@ -116,7 +116,7 @@ function pickerStrings() {
       mode_h: 'Hur kan vi hjälpa dig?', mode_sub: 'Välj vad du vill göra',
       tile_support: 'Support', tile_support_sub: 'Felsök ditt system',
       tile_maintenance: 'Underhållsguide', tile_maintenance_sub: 'Dagliga kontroller och Coffee Rock-byte',
-      tile_install: 'Installationsvideor', tile_install_sub: 'Hela installationen, kapitel för kapitel',
+      tile_install: 'Installationsvideor', tile_install_sub: 'Hela installationen, steg för steg',
       // product picker
       product_h: 'Vilken produkt behöver du hjälp med?', product_sub: 'Välj produkt för att fortsätta', product_tap: 'Tryck för att börja',
       // ask
@@ -162,7 +162,7 @@ function pickerStrings() {
       mode_h: 'What can we help you with?', mode_sub: 'Choose what you want to do',
       tile_support: 'Support', tile_support_sub: 'Troubleshoot your system',
       tile_maintenance: 'Maintenance guide', tile_maintenance_sub: 'Daily checks and Coffee Rock replacement',
-      tile_install: 'Installation videos', tile_install_sub: 'The full installation, chapter by chapter',
+      tile_install: 'Installation videos', tile_install_sub: 'The full installation, step by step',
       // product picker
       product_h: 'Which product do you need help with?', product_sub: 'Choose a product to continue', product_tap: 'Tap to start',
       // ask
@@ -333,20 +333,17 @@ function audioHtml(src, label) {
   if (!src) return '';
   return `<div class="media-audio">${label ? `<span class="media-audio-label">${esc(label)}</span>` : ''}<audio controls preload="none" src="${esc(src)}"></audio></div>`;
 }
-function vimeoSrc(vimeoId, showcase, hash) {
-  // Unlisted videos outside the showcase play directly with their privacy hash (?h=)
-  if (hash) return `https://player.vimeo.com/video/${vimeoId}?h=${hash}&dnt=1`;
-  const show = showcase || (KB && KB.product && KB.product.video_showcase) || '';
-  return show
-    ? `https://vimeo.com/showcase/${show}/embed2?video=${vimeoId}&autoplay=0&dnt=1`
-    : `https://player.vimeo.com/video/${vimeoId}?dnt=1`;
+// Embeds go straight to the player; unlisted videos need their privacy hash (?h=).
+// The old showcase (12116945) and its chapter clips are no longer public on Vimeo.
+function vimeoSrc(vimeoId, hash) {
+  return `https://player.vimeo.com/video/${vimeoId}?${hash ? `h=${hash}&` : ''}dnt=1`;
 }
 function videoFrame(src) {
   return `<div class="video-wrapper"><div class="video-container"><iframe src="${src}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" allowfullscreen></iframe></div></div>`;
 }
 function videoEmbed(v) {
   if (!v || !v.vimeo_id) return '';
-  return videoFrame(vimeoSrc(v.vimeo_id, v.showcase, v.vimeo_hash));
+  return videoFrame(vimeoSrc(v.vimeo_id, v.vimeo_hash));
 }
 function safetyHtml(text) {
   return `<div class="callout callout-safety">${ICON.warn}<span>${esc(text)}</span></div>`;
@@ -855,46 +852,22 @@ function renderInstallationPicker() {
   document.getElementById('installCafe').onclick = () => navTo('install:cafe_station');
 }
 
+// Full installation video (unlisted on Vimeo). The chapter clips were removed from Vimeo;
+// add them back here once they are re-uploaded as Unlisted.
+const INSTALL_VIDEO = { id: '1235342432', hash: '81bf2f2c32' };
+
 function renderInstallationVideo() {
   animateCard();
   const L = pickerStrings();
   const sv = isSv();
-  const showcase = KB && KB.product && KB.product.video_showcase ? KB.product.video_showcase : '12116945';
-  // Installation chapters (showcase clips). Labels inferred — confirm against official Vimeo titles.
-  const chapters = [
-    { id: '1162167921', label: sv ? 'Ström och anslutningar' : 'Power & connections' },
-    { id: '1162167633', label: sv ? 'Boosterpump' : 'Booster pump' },
-    { id: '1162167601', label: sv ? 'Flottörbrytare' : 'Float switch' },
-    { id: '1162167862', label: sv ? 'Flottörbrytare (forts.)' : 'Float switches' },
-    { id: '1162167734', label: sv ? 'Lägen på kontrollboxen' : 'Control box modes' },
-    { id: '1162167532', label: sv ? 'Boosterpump till kaffemaskin' : 'Booster pump to coffee machine' },
-    { id: '1162167682', label: sv ? 'Rensa mineralslangen' : 'Clear the mineral tube' },
-    { id: '1162167569', label: sv ? 'Mineralslang' : 'Mineral tube' },
-    { id: '1162167800', label: sv ? 'Doseringspump' : 'Dosing pump' },
-    { id: '1162167889', label: sv ? 'TDS för lågt' : 'TDS too low' },
-  ];
-  // Chapters are collapsed; the iframe is only inserted when a chapter is opened (saves data on phones)
-  const chaptersHtml = chapters.map((c, i) => `
-    <details class="chapter" data-src="${esc(vimeoSrc(c.id, showcase))}">
-      <summary><span class="chapter-num">${i + 1}</span><span class="chapter-title">${esc(c.label)}</span>${ICON.chevron}</summary>
-      <div class="chapter-body"></div>
-    </details>`).join('');
   cardEl().innerHTML = `
     ${backBtnHtml()}
     <h2>Café Station ${sv ? 'installation' : 'installation'}</h2>
-    <p>${sv ? 'Se hela installationsvideon, eller hoppa direkt till ett kapitel.' : 'Watch the full installation video, or jump straight to a chapter.'}</p>
+    <p>${sv ? 'Se hela installationsvideon från start till mål.' : 'Watch the full installation, start to finish.'}</p>
     <p class="eyebrow">${esc(L.full_video)}</p>
-    ${videoFrame(vimeoSrc('1235342432', null, '81bf2f2c32'))}
-    <p class="eyebrow">${esc(L.chapters)}</p>
-    <div class="chapters">${chaptersHtml}</div>
+    ${videoFrame(vimeoSrc(INSTALL_VIDEO.id, INSTALL_VIDEO.hash))}
     <button class="btn btn-restart" id="installDoneBtn">${esc(ui('restart'))}</button>`;
   bindBack();
-  cardEl().querySelectorAll('details.chapter').forEach(d => {
-    d.addEventListener('toggle', () => {
-      const body = d.querySelector('.chapter-body');
-      if (d.open && body && !body.innerHTML) body.innerHTML = videoFrame(d.dataset.src);
-    });
-  });
   document.getElementById('installDoneBtn').onclick = restart;
 }
 

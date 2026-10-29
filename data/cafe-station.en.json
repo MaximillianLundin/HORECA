@@ -1,12 +1,11 @@
 {
   "schema_version": "1.0",
-  "content_version": "2026-09-03-1",
+  "content_version": "2026-10-28-1",
   "product": {
     "slug": "cafe_station_1",
     "name": "Café Station 1™",
     "language": "en",
-    "support_email": "support@bluewatergroup.com",
-    "video_showcase": "12116945"
+    "support_email": "support@bluewatergroup.com"
   },
   "issues": [
     {
@@ -789,12 +788,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -851,12 +845,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -880,12 +869,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167633",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -934,12 +918,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167601",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -1004,12 +983,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167734",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -1066,12 +1040,7 @@
         }
       ],
       "note": "If the pump runs but the flow is weak, check that none of the hoses are bent or kinked.",
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -1095,12 +1064,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167532",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -1946,16 +1910,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167682",
-          "showcase": "12116945"
-        },
-        {
-          "vimeo_id": "1162167569",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2004,12 +1959,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2188,12 +2138,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167889",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2249,12 +2194,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2311,12 +2251,7 @@
         }
       ],
       "note": "If the control box is green, or green and purple while refilling the tank, the control box is working fine.\n\nIf the lights still blink abnormally, note which lights are on and contact support.",
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2340,12 +2275,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2457,16 +2387,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167601",
-          "showcase": "12116945"
-        },
-        {
-          "vimeo_id": "1162167862",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2517,12 +2438,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167633",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2573,12 +2489,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167532",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2669,12 +2580,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2723,12 +2629,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -3191,12 +3092,7 @@
         }
       ],
       "note": "Mineral levels above zero stay locked in the app until it has been fully closed and reopened after pairing.",
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,

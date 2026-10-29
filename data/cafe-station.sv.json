@@ -1,12 +1,11 @@
 {
   "schema_version": "1.0",
-  "content_version": "2026-09-03-1",
+  "content_version": "2026-10-28-1",
   "product": {
     "slug": "cafe_station_1",
     "name": "Café Station 1™",
     "language": "sv",
-    "support_email": "support@bluewatergroup.com",
-    "video_showcase": "12116945"
+    "support_email": "support@bluewatergroup.com"
   },
   "issues": [
     {
@@ -735,12 +734,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -797,12 +791,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -826,12 +815,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167633",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -880,12 +864,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167601",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -950,12 +929,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167734",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -1012,12 +986,7 @@
         }
       ],
       "note": "Om pumpen går men flödet är svagt — kontrollera att ingen av slangarna är böjd eller veckad.",
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -1041,12 +1010,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167532",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -1941,12 +1905,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2003,12 +1962,7 @@
         }
       ],
       "note": "Viktigt: Mät alltid på KALLT vatten, aldrig varmt. Se till att din mätare använder 0.7 som konverteringsfaktor.",
-      "videos": [
-        {
-          "vimeo_id": "1162167734",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [
         {
           "url": "docs/TDS-Protocol.pdf",
@@ -2122,12 +2076,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167889",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2168,12 +2117,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2222,12 +2166,7 @@
         }
       ],
       "note": "Om lamporna fortfarande blinkar onormalt, notera vilka lampor som lyser och kontakta support.",
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2251,12 +2190,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2356,12 +2290,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167601",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2412,12 +2341,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167682",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2468,12 +2392,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167532",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2561,12 +2480,7 @@
       "tools_needed": [],
       "steps": [],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167921",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -2615,12 +2529,7 @@
         }
       ],
       "note": null,
-      "videos": [
-        {
-          "vimeo_id": "1162167825",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
@@ -3028,12 +2937,7 @@
         }
       ],
       "note": "Mineralnivåer över noll förblir låsta i appen tills den har stängts helt och öppnats igen efter parkopplingen.",
-      "videos": [
-        {
-          "vimeo_id": "1162167800",
-          "showcase": "12116945"
-        }
-      ],
+      "videos": [],
       "documents": [],
       "photo_gallery": [],
       "mid_step_help": null,
