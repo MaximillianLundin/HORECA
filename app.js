@@ -522,6 +522,7 @@ function renderTarget(target) {
   if (target === 'ask' || target === 'start' || target === 'describe') return renderAsk();
   if (target === 'intake') return renderIntake();
   if (target === 'maintenance') return renderMaintenance();
+  if (target === 'maintenance:tank') return renderTankCleaning();
   if (target === 'install') return renderInstallationPicker();
   if (target === 'install:cafe_station') return renderInstallationVideo();
   if (target === 'privacy') return renderPrivacy();
@@ -801,9 +802,44 @@ function renderMaintenance() {
     'Attach the pump to the new bottle — tighten securely.',
     'Check that the tubes are correctly seated and there are no leaks.',
   ];
-  const quarterlyTitle = sv ? 'Kvartalsvis: rengör den trycklösa tanken' : 'Quarterly: clean the pressureless tank';
-  const quarterlyNote = sv ? 'Du behöver inte stänga av strömmen.' : 'No need to turn off the power.';
-  const quarterlyGroups = sv ? [
+  const quarterlyTitle = sv ? 'Kvartalsvis' : 'Quarterly';
+  const tank = tankCleaningContent(sv);
+  const techNote = sv
+    ? 'Filterbyten och membranservice utförs av certifierad tekniker — kontakta din distributör för service.'
+    : 'Filter replacements and membrane servicing are performed by a certified technician — contact your distributor for service.';
+
+  const li = items => items.map(i => `<li>${esc(i)}</li>`).join('');
+  cardEl().innerHTML = `
+    ${backBtnHtml()}
+    <h2>${esc(title)}</h2>
+    <p>${esc(intro)}</p>
+    <div class="maint-section">
+      <div class="maint-freq">${ICON.clock}${esc(dailyTitle)}</div>
+      <ul class="maint-list">${li(dailyItems)}</ul>
+    </div>
+    <div class="maint-section">
+      <div class="maint-freq">${ICON.calendar}${esc(standstillTitle)}</div>
+      <ul class="maint-list">${li(standstillItems)}</ul>
+    </div>
+    <div class="maint-section">
+      <div class="maint-freq">${ICON.calendar}${esc(quarterlyTitle)}</div>
+      <button class="maint-link" id="tankCleaningBtn"><span>${esc(tank.title)}</span>${ICON.chevron}</button>
+    </div>
+    <div class="maint-section">
+      <div class="maint-freq">${ICON.bottle}${esc(replTitle)}</div>
+      <ul class="maint-list">${li(replItems)}</ul>
+    </div>
+    <div class="callout callout-info">${ICON.info}<span>${esc(techNote)}</span></div>`;
+  bindBack();
+  document.getElementById('tankCleaningBtn').onclick = () => navTo('maintenance:tank');
+}
+
+// Quarterly cleaning of the pressureless tank (own page, opened from the Maintenance guide)
+function tankCleaningContent(sv) {
+  return {
+    title: sv ? 'Rengöring av tank' : 'Cleaning of tank',
+    note: sv ? 'Görs kvartalsvis. Du behöver inte stänga av strömmen.' : 'Do this quarterly. No need to turn off the power.',
+    groups: sv ? [
     { title: 'Koppla loss', items: [
       'Leta upp den vita tanken med det stora röda locket. Röj undan runt den.',
       'Skruva loss stålringen på den svarta flottörkabeln och lyft av kabeln.',
@@ -839,40 +875,28 @@ function renderMaintenance() {
       "Line up the float switch cable's 4 holes with the 4 pins, press down gently and tighten the steel ring.",
       "Check the system: unplug the blue control box's power cord and plug it straight back in to start a fill. Be ready to pull the purifier's plug if it overflows, and troubleshoot with the support app.",
     ] },
-  ];
-  const techNote = sv
-    ? 'Filterbyten och membranservice utförs av certifierad tekniker — kontakta din distributör för service.'
-    : 'Filter replacements and membrane servicing are performed by a certified technician — contact your distributor for service.';
+  ],
+  };
+}
 
+function renderTankCleaning() {
+  animateCard();
+  const c = tankCleaningContent(isSv());
   const li = items => items.map(i => `<li>${esc(i)}</li>`).join('');
   let stepNo = 1;
-  const quarterlyHtml = quarterlyGroups.map(g => {
+  const groupsHtml = c.groups.map(g => {
     const start = stepNo;
     stepNo += g.items.length;
-    return `<div class="maint-sub">${esc(g.title)}</div><ol class="maint-steps" start="${start}">${li(g.items)}</ol>`;
+    return `<div class="maint-section">
+      <div class="maint-freq">${esc(g.title)}</div>
+      <ol class="maint-steps" start="${start}">${li(g.items)}</ol>
+    </div>`;
   }).join('');
   cardEl().innerHTML = `
     ${backBtnHtml()}
-    <h2>${esc(title)}</h2>
-    <p>${esc(intro)}</p>
-    <div class="maint-section">
-      <div class="maint-freq">${ICON.clock}${esc(dailyTitle)}</div>
-      <ul class="maint-list">${li(dailyItems)}</ul>
-    </div>
-    <div class="maint-section">
-      <div class="maint-freq">${ICON.calendar}${esc(standstillTitle)}</div>
-      <ul class="maint-list">${li(standstillItems)}</ul>
-    </div>
-    <div class="maint-section">
-      <div class="maint-freq">${ICON.calendar}${esc(quarterlyTitle)}</div>
-      <p class="maint-note">${esc(quarterlyNote)}</p>
-      ${quarterlyHtml}
-    </div>
-    <div class="maint-section">
-      <div class="maint-freq">${ICON.bottle}${esc(replTitle)}</div>
-      <ul class="maint-list">${li(replItems)}</ul>
-    </div>
-    <div class="callout callout-info">${ICON.info}<span>${esc(techNote)}</span></div>`;
+    <h2>${esc(c.title)}</h2>
+    <p>${esc(c.note)}</p>
+    ${groupsHtml}`;
   bindBack();
 }
 
