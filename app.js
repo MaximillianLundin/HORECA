@@ -858,7 +858,7 @@ function tankCleaningContent(sv) {
       'Koppla slangen från den blå styrboxen till inloppet utan slang inuti tanken. Koppla den svarta pumpslangen till utloppet vars slang går ner till botten.',
       'Passa in flottörkabelns 4 hål mot de 4 stiften, tryck ner försiktigt och dra åt stålringen.',
       'Sätt tillbaka strömmen till reningen och den blå styrboxen.',
-      { text: 'VIKTIGT: Tryck en gång med en tunn nål på knappen inne i det nedre hålet på reningen. Det startar reningen.', important: true },
+      { text: 'VIKTIGT: Tryck en gång med en tunn nål på knappen inne i det nedre hålet på reningen, bredvid texten "Service". Det startar reningen.', important: true },
       'Kontrollera att systemet fylls och sedan stannar. Var beredd att dra ur kontakten till reningen om det svämmar över, och felsök med supportappen.',
     ] },
   ] : [
@@ -879,7 +879,7 @@ function tankCleaningContent(sv) {
       'Connect the tube from the blue control box to the inlet with no tube inside the tank. Connect the black pump tube to the outlet whose tube reaches the bottom.',
       "Line up the float switch cable's 4 holes with the 4 pins, press down gently and tighten the steel ring.",
       'Put the power back to the purifier and the blue control box.',
-      { text: 'IMPORTANT: Use a thin needle to press the button inside the lower hole on the purifier once. This activates the purifier.', important: true },
+      { text: 'IMPORTANT: Use a thin needle to press the button inside the lower hole on the purifier, next to the text "Service", once. This activates the purifier.', important: true },
       "Check that the system fills and then stops. Be ready to pull the purifier's plug if it overflows, and troubleshoot with the support app.",
     ] },
   ],
