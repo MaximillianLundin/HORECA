@@ -742,6 +742,12 @@ main {
 .maint-list li { font-size: 15px; color: var(--g700); padding-left: 16px; position: relative; line-height: 1.45; }
 .maint-list li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--blue600); }
 .maint-section + .callout { margin-top: 8px; }
+.maint-link { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; padding: 12px 14px; background: var(--white); border: 1px solid var(--g300); border-radius: var(--radius); font: inherit; font-size: 15px; font-weight: 500; color: var(--g800); cursor: pointer; text-align: left; }
+.maint-link:hover { background: var(--g100); }
+.maint-link svg { color: var(--blue600); flex: 0 0 auto; }
+.maint-steps { padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.maint-steps li { font-size: 15px; color: var(--g700); line-height: 1.45; padding-left: 2px; }
+.maint-steps li::marker { color: var(--blue600); font-weight: 600; }
 
 /* ---------- Misc ---------- */
 .loading { display: flex; justify-content: center; padding: 32px 0; }
