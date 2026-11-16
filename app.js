@@ -838,9 +838,11 @@ function renderMaintenance() {
 function tankCleaningContent(sv) {
   return {
     title: sv ? 'Rengöring av tank' : 'Cleaning of tank',
-    note: sv ? 'Görs kvartalsvis. Du behöver inte stänga av strömmen.' : 'Do this quarterly. No need to turn off the power.',
+    note: sv ? 'Görs kvartalsvis.' : 'Do this quarterly.',
+    // An item can be a plain string, or { text, important: true } to show it large and bold.
     groups: sv ? [
     { title: 'Koppla loss', items: [
+      'Dra ur strömmen till RO-enheten och den blå styrboxen.',
       'Leta upp den vita tanken med det stora röda locket. Röj undan runt den.',
       'Skruva loss stålringen på den svarta flottörkabeln och lyft av kabeln.',
       'Tryck jämnt på låsringarna på John Guest-kopplingarna och dra ut slangarna.',
@@ -855,10 +857,13 @@ function tankCleaningContent(sv) {
       'Ställ tillbaka tanken exakt som den stod.',
       'Koppla slangen från den blå styrboxen till inloppet utan slang inuti tanken. Koppla den svarta pumpslangen till utloppet vars slang går ner till botten.',
       'Passa in flottörkabelns 4 hål mot de 4 stiften, tryck ner försiktigt och dra åt stålringen.',
-      'Kontrollera systemet: dra ur strömsladden till den blå styrboxen och sätt i den direkt igen för att starta påfyllningen. Var beredd att dra ur kontakten till reningen om det svämmar över, och felsök med supportappen.',
+      'Sätt tillbaka strömmen till RO-enheten och den blå styrboxen.',
+      { text: 'VIKTIGT: Tryck en gång med en tunn nål på knappen inne i det nedre hålet på RO-enheten. Det startar RO-enheten.', important: true },
+      'Kontrollera att systemet fylls och sedan stannar. Var beredd att dra ur kontakten till RO-enheten om det svämmar över, och felsök med supportappen.',
     ] },
   ] : [
     { title: 'Detach', items: [
+      'Pull the power to the RO and the blue control box.',
       'Locate the white tank with the big red lid. Clear the area around it.',
       'Unscrew the steel ring on the black float switch cable and lift the cable off.',
       'Press the locking rings evenly on the John Guest connectors and pull out the tubes.',
@@ -873,7 +878,9 @@ function tankCleaningContent(sv) {
       'Put the tank back exactly as before.',
       'Connect the tube from the blue control box to the inlet with no tube inside the tank. Connect the black pump tube to the outlet whose tube reaches the bottom.',
       "Line up the float switch cable's 4 holes with the 4 pins, press down gently and tighten the steel ring.",
-      "Check the system: unplug the blue control box's power cord and plug it straight back in to start a fill. Be ready to pull the purifier's plug if it overflows, and troubleshoot with the support app.",
+      'Put the power back to the RO and the blue control box.',
+      { text: 'IMPORTANT: Use a thin needle to press the button inside the lower hole on the RO once. This activates the RO.', important: true },
+      "Check that the system fills and then stops. Be ready to pull the RO's plug if it overflows, and troubleshoot with the support app.",
     ] },
   ],
   };
@@ -882,7 +889,9 @@ function tankCleaningContent(sv) {
 function renderTankCleaning() {
   animateCard();
   const c = tankCleaningContent(isSv());
-  const li = items => items.map(i => `<li>${esc(i)}</li>`).join('');
+  const li = items => items.map(i => typeof i === 'string'
+    ? `<li>${esc(i)}</li>`
+    : `<li class="${i.important ? 'maint-important' : ''}">${esc(i.text)}</li>`).join('');
   let stepNo = 1;
   const groupsHtml = c.groups.map(g => {
     const start = stepNo;
