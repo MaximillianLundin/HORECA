@@ -801,11 +801,56 @@ function renderMaintenance() {
     'Attach the pump to the new bottle — tighten securely.',
     'Check that the tubes are correctly seated and there are no leaks.',
   ];
+  const quarterlyTitle = sv ? 'Kvartalsvis: rengör den trycklösa tanken' : 'Quarterly: clean the pressureless tank';
+  const quarterlyNote = sv ? 'Du behöver inte stänga av strömmen.' : 'No need to turn off the power.';
+  const quarterlyGroups = sv ? [
+    { title: 'Koppla loss', items: [
+      'Leta upp den vita tanken med det stora röda locket. Röj undan runt den.',
+      'Skruva loss stålringen på den svarta flottörkabeln och lyft av kabeln.',
+      'Tryck jämnt på låsringarna på John Guest-kopplingarna och dra ut slangarna.',
+      'Lyft ur tanken och töm den.',
+    ] },
+    { title: 'Rengör', items: [
+      'Häll i några droppar diskmedel och 2 liter ljummet vatten, skruva på locket och skaka försiktigt.',
+      'Ta av locket och torka insidan med en mjuk svamp. Var försiktig runt flottören.',
+      'Skölj 3–4 gånger med rent vatten och torka med hushållspapper.',
+    ] },
+    { title: 'Koppla in', items: [
+      'Ställ tillbaka tanken exakt som den stod.',
+      'Koppla slangen från den blå styrboxen till inloppet utan slang inuti tanken. Koppla den svarta pumpslangen till utloppet vars slang går ner till botten.',
+      'Passa in flottörkabelns 4 hål mot de 4 stiften, tryck ner försiktigt och dra åt stålringen.',
+      'Kontrollera systemet: dra ur strömsladden till den blå styrboxen och sätt i den direkt igen för att starta påfyllningen. Var beredd att dra ur kontakten till reningen om det svämmar över, och felsök med supportappen.',
+    ] },
+  ] : [
+    { title: 'Detach', items: [
+      'Locate the white tank with the big red lid. Clear the area around it.',
+      'Unscrew the steel ring on the black float switch cable and lift the cable off.',
+      'Press the locking rings evenly on the John Guest connectors and pull out the tubes.',
+      'Lift out the tank and empty it.',
+    ] },
+    { title: 'Clean', items: [
+      'Add a few drops of dish soap and 2 litres of lukewarm water, close the lid and shake gently.',
+      'Open the lid and wipe the inside with a soft sponge. Be gentle around the float switch.',
+      'Rinse 3 to 4 times with fresh water and wipe dry with paper towel.',
+    ] },
+    { title: 'Reconnect', items: [
+      'Put the tank back exactly as before.',
+      'Connect the tube from the blue control box to the inlet with no tube inside the tank. Connect the black pump tube to the outlet whose tube reaches the bottom.',
+      "Line up the float switch cable's 4 holes with the 4 pins, press down gently and tighten the steel ring.",
+      "Check the system: unplug the blue control box's power cord and plug it straight back in to start a fill. Be ready to pull the purifier's plug if it overflows, and troubleshoot with the support app.",
+    ] },
+  ];
   const techNote = sv
     ? 'Filterbyten och membranservice utförs av certifierad tekniker — kontakta din distributör för service.'
     : 'Filter replacements and membrane servicing are performed by a certified technician — contact your distributor for service.';
 
   const li = items => items.map(i => `<li>${esc(i)}</li>`).join('');
+  let stepNo = 1;
+  const quarterlyHtml = quarterlyGroups.map(g => {
+    const start = stepNo;
+    stepNo += g.items.length;
+    return `<div class="maint-sub">${esc(g.title)}</div><ol class="maint-steps" start="${start}">${li(g.items)}</ol>`;
+  }).join('');
   cardEl().innerHTML = `
     ${backBtnHtml()}
     <h2>${esc(title)}</h2>
@@ -817,6 +862,11 @@ function renderMaintenance() {
     <div class="maint-section">
       <div class="maint-freq">${ICON.calendar}${esc(standstillTitle)}</div>
       <ul class="maint-list">${li(standstillItems)}</ul>
+    </div>
+    <div class="maint-section">
+      <div class="maint-freq">${ICON.calendar}${esc(quarterlyTitle)}</div>
+      <p class="maint-note">${esc(quarterlyNote)}</p>
+      ${quarterlyHtml}
     </div>
     <div class="maint-section">
       <div class="maint-freq">${ICON.bottle}${esc(replTitle)}</div>
