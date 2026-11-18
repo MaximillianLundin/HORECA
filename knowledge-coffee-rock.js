@@ -30,14 +30,15 @@ const COFFEE_ROCK = {
   },
 
   // Coffee Rock® dose (mL/L) → mineral content in water
+  // Source: updated Coffee Rock ingredients chart, Nov 2026
   dosingTable: [
-    { dose_mL_per_L: 1.5, magnesium_mg_per_L: 9,  calcium_mg_per_L: 1.4 },
-    { dose_mL_per_L: 2.0, magnesium_mg_per_L: 12, calcium_mg_per_L: 1.9 },
-    { dose_mL_per_L: 2.5, magnesium_mg_per_L: 15, calcium_mg_per_L: 2.4 },
-    { dose_mL_per_L: 3.0, magnesium_mg_per_L: 18, calcium_mg_per_L: 2.8 },
-    { dose_mL_per_L: 3.5, magnesium_mg_per_L: 21, calcium_mg_per_L: 3.3 },
-    { dose_mL_per_L: 4.0, magnesium_mg_per_L: 24, calcium_mg_per_L: 3.8 },
-    { dose_mL_per_L: 4.5, magnesium_mg_per_L: 27, calcium_mg_per_L: 4.3 }
+    { dose_mL_per_L: 1.5, magnesium_mg_per_L: 10.5, calcium_mg_per_L: 3.3 },
+    { dose_mL_per_L: 2.0, magnesium_mg_per_L: 14.0, calcium_mg_per_L: 4.4 },
+    { dose_mL_per_L: 2.5, magnesium_mg_per_L: 17.5, calcium_mg_per_L: 5.5 },
+    { dose_mL_per_L: 3.0, magnesium_mg_per_L: 21.0, calcium_mg_per_L: 6.6 },
+    { dose_mL_per_L: 3.5, magnesium_mg_per_L: 24.5, calcium_mg_per_L: 7.7 },
+    { dose_mL_per_L: 4.0, magnesium_mg_per_L: 28.0, calcium_mg_per_L: 8.8 },
+    { dose_mL_per_L: 4.5, magnesium_mg_per_L: 31.5, calcium_mg_per_L: 9.9 }
   ],
 
   brewModes: {
