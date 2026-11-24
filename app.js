@@ -116,7 +116,7 @@ function pickerStrings() {
       mode_h: 'Hur kan vi hjälpa dig?', mode_sub: 'Välj vad du vill göra',
       tile_support: 'Support', tile_support_sub: 'Felsök ditt system',
       tile_maintenance: 'Underhållsguide', tile_maintenance_sub: 'Dagliga kontroller och Coffee Rock-byte',
-      tile_install: 'Installationsvideor', tile_install_sub: 'Hela installationen, steg för steg',
+      tile_install: 'Installationsvideor', tile_install_sub: 'Hela installationen, kapitel för kapitel',
       // product picker
       product_h: 'Vilken produkt behöver du hjälp med?', product_sub: 'Välj produkt för att fortsätta', product_tap: 'Tryck för att börja',
       // ask
@@ -162,7 +162,7 @@ function pickerStrings() {
       mode_h: 'What can we help you with?', mode_sub: 'Choose what you want to do',
       tile_support: 'Support', tile_support_sub: 'Troubleshoot your system',
       tile_maintenance: 'Maintenance guide', tile_maintenance_sub: 'Daily checks and Coffee Rock replacement',
-      tile_install: 'Installation videos', tile_install_sub: 'The full installation, step by step',
+      tile_install: 'Installation videos', tile_install_sub: 'The full installation, chapter by chapter',
       // product picker
       product_h: 'Which product do you need help with?', product_sub: 'Choose a product to continue', product_tap: 'Tap to start',
       // ask
@@ -935,22 +935,52 @@ function renderInstallationPicker() {
   document.getElementById('installCafe').onclick = () => navTo('install:cafe_station');
 }
 
-// Full installation video (unlisted on Vimeo). The chapter clips were removed from Vimeo;
-// add them back here once they are re-uploaded as Unlisted.
+// Full installation video and its chapter clips (all Unlisted on Vimeo; the ?h= hash is required).
+// The clips only embed on allowlisted domains: portal.bluewater.com and bluewater-horeca-support.vercel.app.
 const INSTALL_VIDEO = { id: '1235342432', hash: '81bf2f2c32' };
+const INSTALL_CHAPTERS = [
+  { id: '1162167706', hash: '3b62aba309', en: 'Adjust the footprint', sv: 'Anpassa placeringen' },
+  { id: '1162167825', hash: 'dcdb62b065', en: 'Mount the control box', sv: 'Montera kontrollboxen' },
+  { id: '1162167496', hash: '0dea93c616', en: 'Attach dosing pump to mineral canister', sv: 'Fäst doseringspumpen på mineralbehållaren' },
+  { id: '1162167800', hash: 'be0b8b65af', en: 'Connect control box to dosing pump', sv: 'Anslut kontrollboxen till doseringspumpen' },
+  { id: '1162167682', hash: 'f734eeaf42', en: 'Dosing pump tube to check valve', sv: 'Doseringsslang till backventil' },
+  { id: '1162167569', hash: '031a601542', en: 'Mineral tube to pressureless tank', sv: 'Mineralslang till trycklös tank' },
+  { id: '1162167633', hash: 'd08adc6333', en: 'Pressureless tank to booster pump', sv: 'Trycklös tank till boosterpump' },
+  { id: '1162167532', hash: '5743d80966', en: 'Booster pump to espresso machine and extra faucet', sv: 'Boosterpump till espressomaskin och extra kran' },
+  { id: '1162167601', hash: '635c1ce2d7', en: 'Float switch to control box', sv: 'Flottörbrytare till kontrollbox' },
+  { id: '1162167921', hash: '57cafe3ef4', en: 'Switch on with power', sv: 'Starta med ström' },
+  { id: '1162167889', hash: 'aa5c8ed7c5', en: 'Prime the dosing pump tube', sv: 'Fyll doseringsslangen med mineraler' },
+  { id: '1162167734', hash: 'dbabfcd67c', en: 'Change modes on the control box', sv: 'Byt läge på kontrollboxen' },
+  { id: '1162167757', hash: 'd4d6a96ab2', en: 'Choose espresso mode and check function', sv: 'Välj espressoläge och kontrollera funktionen' },
+  { id: '1162167862', hash: 'c05ec3f69f', en: 'Pressureless tank overfilling', sv: 'Trycklös tank överfylls' },
+];
 
 function renderInstallationVideo() {
   animateCard();
   const L = pickerStrings();
   const sv = isSv();
+  // Chapters are collapsed; the iframe is only inserted when a chapter is opened (saves data on phones)
+  const chaptersHtml = INSTALL_CHAPTERS.map((c, i) => `
+    <details class="chapter" data-src="${esc(vimeoSrc(c.id, c.hash))}">
+      <summary><span class="chapter-num">${i + 1}</span><span class="chapter-title">${esc(sv ? c.sv : c.en)}</span>${ICON.chevron}</summary>
+      <div class="chapter-body"></div>
+    </details>`).join('');
   cardEl().innerHTML = `
     ${backBtnHtml()}
     <h2>Café Station ${sv ? 'installation' : 'installation'}</h2>
-    <p>${sv ? 'Se hela installationsvideon från start till mål.' : 'Watch the full installation, start to finish.'}</p>
+    <p>${sv ? 'Se hela installationsvideon, eller hoppa direkt till ett kapitel.' : 'Watch the full installation video, or jump straight to a chapter.'}</p>
     <p class="eyebrow">${esc(L.full_video)}</p>
     ${videoFrame(vimeoSrc(INSTALL_VIDEO.id, INSTALL_VIDEO.hash))}
+    <p class="eyebrow">${esc(L.chapters)}</p>
+    <div class="chapters">${chaptersHtml}</div>
     <button class="btn btn-restart" id="installDoneBtn">${esc(ui('restart'))}</button>`;
   bindBack();
+  cardEl().querySelectorAll('details.chapter').forEach(d => {
+    d.addEventListener('toggle', () => {
+      const body = d.querySelector('.chapter-body');
+      if (d.open && body && !body.innerHTML) body.innerHTML = videoFrame(d.dataset.src);
+    });
+  });
   document.getElementById('installDoneBtn').onclick = restart;
 }
 
